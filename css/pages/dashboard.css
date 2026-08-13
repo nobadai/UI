@@ -1,0 +1,8 @@
+/* 대시보드 전용: 가격 카드 → 예측/근거 → 메뉴 영향 흐름 */
+#appMain .price-grid{align-items:stretch}
+#appMain .dashboard-middle{align-items:stretch}
+#appMain .dashboard-middle>.card{min-width:0}
+#appMain .evidence-card .section-head{margin-bottom:10px}
+#appMain .evidence-card .data-table{table-layout:auto}
+@media(max-width:1279px){#appMain .dashboard-middle{grid-template-columns:minmax(0,1.45fr) minmax(340px,1fr)}}
+@media(max-width:1050px){#appMain .dashboard-middle{grid-template-columns:1fr}}

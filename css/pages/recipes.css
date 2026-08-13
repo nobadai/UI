@@ -1,0 +1,4 @@
+/* 레시피 관리 화면 */
+#appMain .recipe-layout{align-items:start}
+#appMain .list-panel{position:sticky;top:108px}
+@media(max-width:900px){#appMain .list-panel{position:static}}

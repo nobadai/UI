@@ -1,0 +1,3 @@
+/* 식자재 가격 분석 화면 */
+#appMain .price-grid+.chart-card{margin-top:4px}
+#appMain .chart-card{min-width:0}

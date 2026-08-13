@@ -1,0 +1,3 @@
+/* 브리핑 기록 화면 */
+#appMain .brief-card{transition:border-color .15s,transform .15s}
+#appMain .brief-card:hover{transform:translateY(-1px)}

@@ -1,0 +1,3 @@
+@import url("briefings.css");
+/* 알림 센터 화면 */
+#appMain .timeline-dot{border-color:var(--warning)}

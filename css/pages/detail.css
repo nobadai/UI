@@ -1,0 +1,4 @@
+/* 상세 분석 화면 */
+#appMain .detail-grid{align-items:start}
+#appMain .metric-list{min-width:0}
+#appMain .evidence-card{overflow:hidden}
