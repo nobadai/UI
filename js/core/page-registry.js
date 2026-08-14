@@ -1,0 +1,17 @@
+const pages = {
+  dashboard: () => dashboardPage(false),
+  ingredient: () => dashboardPage(true),
+  detail: () => detailPage(),
+  recipes: () => recipePage(false),
+  "menu-cost": () => recipePage(true),
+  stores: () => storesPage("매장 통합 현황"),
+  franchise: () => franchisePage(),
+  briefings: () => briefingPage(),
+  alerts: () => alertsPage(),
+  profile: () => settingsPage("profile"),
+  company: () => settingsPage("company"),
+  settings: () => settingsPage("settings"),
+  plans: () => plansPage(),
+  guest: () => guestPage(),
+  errors: () => errorsPage(),
+};

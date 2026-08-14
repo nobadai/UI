@@ -6,25 +6,446 @@
 @import url("style.css");
 
 /* Typography system: Korean UI + data-friendly Latin numerals */
-:root{--font-ui:"Inter","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--text-xs:11px;--text-sm:12px;--text-base:14px;--text-md:16px;--text-lg:18px;--text-xl:24px}
-html{font-size:16px}body,button,input,select,textarea{font-family:var(--font-ui);font-optical-sizing:auto}body{font-size:var(--text-base);line-height:1.5;letter-spacing:-.015em}button,input,select{letter-spacing:-.01em}.page-heading h1{font-size:var(--text-xl);font-weight:750;line-height:1.25}.page-heading p{font-size:var(--text-sm);line-height:1.45}.section-head h2{font-size:var(--text-lg);font-weight:750;line-height:1.35}.section-head p,.page-intro p{font-size:var(--text-sm);line-height:1.55}.page-intro h2{font-size:26px;font-weight:750}.nav-label{font-size:var(--text-sm)}.nav-item{font-size:13px}.nav-item.sub{font-size:13px}.price-card h3,.menu-impact h3{font-size:15px;font-weight:700}.price-value,.kpi-card strong,.impact-delta,.plan-price{font-family:"Inter","Noto Sans KR",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.025em}.price-value{font-size:23px}.data-table{font-size:var(--text-sm)}.data-table th{font-size:var(--text-xs)}.data-table td{line-height:1.4}.button,.filter-control{font-size:var(--text-sm)}.status-badge{font-size:var(--text-xs)}.bubble{font-size:13px;line-height:1.65}.forecast-metrics strong{font-size:14px}.forecast-metrics span,.forecast-metrics small{font-size:10px}.auth-page{font-family:var(--font-ui)}
+:root {
+  --font-ui:
+    "Inter", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-base: 14px;
+  --text-md: 16px;
+  --text-lg: 18px;
+  --text-xl: 24px;
+}
+html {
+  font-size: 16px;
+}
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-ui);
+  font-optical-sizing: auto;
+}
+body {
+  font-size: var(--text-base);
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+}
+button,
+input,
+select {
+  letter-spacing: -0.01em;
+}
+.page-heading h1 {
+  font-size: var(--text-xl);
+  font-weight: 750;
+  line-height: 1.25;
+}
+.page-heading p {
+  font-size: var(--text-sm);
+  line-height: 1.45;
+}
+.section-head h2 {
+  font-size: var(--text-lg);
+  font-weight: 750;
+  line-height: 1.35;
+}
+.section-head p,
+.page-intro p {
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+.page-intro h2 {
+  font-size: 26px;
+  font-weight: 750;
+}
+.nav-label {
+  font-size: var(--text-sm);
+}
+.nav-item {
+  font-size: 13px;
+}
+.nav-item.sub {
+  font-size: 13px;
+}
+.price-card h3,
+.menu-impact h3 {
+  font-size: 15px;
+  font-weight: 700;
+}
+.price-value,
+.kpi-card strong,
+.impact-delta,
+.plan-price {
+  font-family: "Inter", "Noto Sans KR", sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.025em;
+}
+.price-value {
+  font-size: 23px;
+}
+.data-table {
+  font-size: var(--text-sm);
+}
+.data-table th {
+  font-size: var(--text-xs);
+}
+.data-table td {
+  line-height: 1.4;
+}
+.button,
+.filter-control {
+  font-size: var(--text-sm);
+}
+.status-badge {
+  font-size: var(--text-xs);
+}
+.bubble {
+  font-size: 13px;
+  line-height: 1.65;
+}
+.forecast-metrics strong {
+  font-size: 14px;
+}
+.forecast-metrics span,
+.forecast-metrics small {
+  font-size: 10px;
+}
+.auth-page {
+  font-family: var(--font-ui);
+}
 
 /* 챗봇은 앱 레이아웃과 독립된 최상위 오버레이입니다. */
-.workspace{margin-right:0!important;transition:none!important;min-width:0}
-.chat-panel{position:fixed!important;z-index:1000;contain:layout paint;isolation:isolate}
-.chat-launcher{z-index:999}
-.modal-backdrop{z-index:1100}
-.toast-region{z-index:1200}
+.workspace {
+  margin-right: 0 !important;
+  transition: none !important;
+  min-width: 0;
+}
+.chat-panel {
+  position: fixed !important;
+  z-index: 1000;
+  contain: layout paint;
+  isolation: isolate;
+}
+.chat-launcher {
+  z-index: 999;
+}
+.modal-backdrop {
+  z-index: 1100;
+}
+.toast-region {
+  z-index: 1200;
+}
 
 /* 공통 접근성 */
-:focus-visible{outline:3px solid rgba(24,92,74,.25);outline-offset:2px}
-.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+:focus-visible {
+  outline: 3px solid rgba(24, 92, 74, 0.25);
+  outline-offset: 2px;
+}
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Shared form layout used by modals and settings panels. */
+.modal-form {
+  display: grid;
+  gap: 8px;
+}
+
+.modal-form .field-label:not(:first-child) {
+  margin-top: 7px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
 
 /* 핵심 가격 예측 컨트롤 */
-.forecast-panel{border-top:1px solid var(--border);padding-top:13px;margin-top:5px}.horizon-selector{display:flex;align-items:center;gap:6px}.horizon-selector>span{font-size:11px;color:var(--text-secondary);font-weight:700;margin-right:5px}.horizon-button{border:1px solid var(--border);background:#fff;border-radius:7px;padding:6px 10px;font-size:10px;cursor:pointer}.horizon-button:hover{border-color:#abc8bc;color:var(--primary)}.horizon-button.active{border-color:var(--primary);background:var(--primary);color:#fff;font-weight:750}.forecast-metrics{display:grid;grid-template-columns:1fr .8fr 1.15fr;gap:8px;margin-top:10px}.forecast-metrics>div{background:#f7f9f7;border-radius:8px;padding:9px 10px}.forecast-metrics span,.forecast-metrics small{display:block;color:var(--text-secondary);font-size:9px}.forecast-metrics strong{display:block;margin:4px 0;font-size:13px}.selected-forecast{fill:#fff;stroke:var(--danger);stroke-width:4}.forecast-hit{cursor:pointer}@media(max-width:700px){.forecast-metrics{grid-template-columns:1fr}.horizon-selector{flex-wrap:wrap}}
-.granularity-control{display:flex;align-items:center;gap:7px;color:var(--text-secondary);font-size:10px;font-weight:700}.granularity-control .filter-control{min-width:76px}.chart-toolbar{align-items:center;flex-wrap:wrap}.chart-toolbar .granularity-control{order:-1}@media(max-width:700px){.granularity-control{width:100%;justify-content:flex-end}.granularity-control .filter-control{flex:0 0 88px}}
-.forecast-guide{display:flex;align-items:center;gap:8px;color:var(--text-secondary);font-size:10px;line-height:1.45}.forecast-guide strong{color:var(--primary);margin-right:3px}.forecast-guide-icon{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--primary-light);color:var(--primary);font-size:13px;font-weight:800;flex:0 0 24px}.forecast-event-point{cursor:crosshair;outline:none}.forecast-point-dot{fill:#fff;stroke:var(--primary);stroke-width:2;transition:r .15s,fill .15s}.forecast-point-hit{fill:transparent;pointer-events:all}.daily-hover-zone .forecast-point-dot{opacity:0}.daily-hover-zone:hover .forecast-point-dot,.daily-hover-zone:focus .forecast-point-dot{opacity:1;r:4;fill:#fff;stroke:var(--danger)}.forecast-event-point:not(.daily-hover-zone):hover .forecast-point-dot,.forecast-event-point:not(.daily-hover-zone):focus .forecast-point-dot{r:6;fill:var(--primary-light);stroke:var(--danger)}
+.forecast-panel {
+  border-top: 1px solid var(--border);
+  padding-top: 13px;
+  margin-top: 5px;
+}
+.horizon-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.horizon-selector > span {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 700;
+  margin-right: 5px;
+}
+.horizon-button {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 7px;
+  padding: 6px 10px;
+  font-size: 10px;
+  cursor: pointer;
+}
+.horizon-button:hover {
+  border-color: #abc8bc;
+  color: var(--primary);
+}
+.horizon-button.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+  font-weight: 750;
+}
+.forecast-metrics {
+  display: grid;
+  grid-template-columns: 1fr 0.8fr 1.15fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+.forecast-metrics > div {
+  background: #f7f9f7;
+  border-radius: 8px;
+  padding: 9px 10px;
+}
+.forecast-metrics span,
+.forecast-metrics small {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 9px;
+}
+.forecast-metrics strong {
+  display: block;
+  margin: 4px 0;
+  font-size: 13px;
+}
+.selected-forecast {
+  fill: #fff;
+  stroke: var(--danger);
+  stroke-width: 4;
+}
+.forecast-hit {
+  cursor: pointer;
+}
+@media (max-width: 700px) {
+  .forecast-metrics {
+    grid-template-columns: 1fr;
+  }
+  .horizon-selector {
+    flex-wrap: wrap;
+  }
+}
+.granularity-control {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 700;
+}
+.granularity-control .filter-control {
+  min-width: 76px;
+}
+.chart-toolbar {
+  align-items: center;
+  flex-wrap: wrap;
+}
+.chart-toolbar .granularity-control {
+  order: -1;
+}
+@media (max-width: 700px) {
+  .granularity-control {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .granularity-control .filter-control {
+    flex: 0 0 88px;
+  }
+}
+.forecast-guide {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  line-height: 1.45;
+}
+.forecast-guide strong {
+  color: var(--primary);
+  margin-right: 3px;
+}
+.forecast-guide-icon {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 800;
+  flex: 0 0 24px;
+}
+.forecast-event-point {
+  cursor: crosshair;
+  outline: none;
+}
+.forecast-point-dot {
+  fill: #fff;
+  stroke: var(--primary);
+  stroke-width: 2;
+  transition:
+    r 0.15s,
+    fill 0.15s;
+}
+.forecast-point-hit {
+  fill: transparent;
+  pointer-events: all;
+}
+.daily-hover-zone .forecast-point-dot {
+  opacity: 0;
+}
+.daily-hover-zone:hover .forecast-point-dot,
+.daily-hover-zone:focus .forecast-point-dot {
+  opacity: 1;
+  r: 4;
+  fill: #fff;
+  stroke: var(--danger);
+}
+.forecast-event-point:not(.daily-hover-zone):hover .forecast-point-dot,
+.forecast-event-point:not(.daily-hover-zone):focus .forecast-point-dot {
+  r: 6;
+  fill: var(--primary-light);
+  stroke: var(--danger);
+}
 
 /* Dense dashboard typography aligned to the reference layout */
-body{font-size:14px}.page-heading h1{font-size:24px}.page-heading p{font-size:12px}.page-intro h2{font-size:25px}.section-head h2{font-size:18px}.section-head p,.page-intro p{font-size:12px}.nav-label{font-size:12px}.nav-item,.nav-item.sub{font-size:13px}.price-card h3,.menu-impact h3{font-size:15px}.price-value{font-size:23px}.data-table{font-size:11.5px}.data-table th{font-size:11px}.data-table th,.data-table td{padding:8px 7px}.button,.filter-control{font-size:12px}.status-badge{font-size:10.5px}.evidence-block+.evidence-block{margin-top:12px}.evidence-block-title{font-size:12px;margin:0 0 7px;font-weight:750}.evidence-block-title span{color:var(--primary)}.evidence-card .ai-summary{margin-top:12px;padding:10px 11px;font-size:11.5px;line-height:1.6}.forecast-guide{font-size:11px}.forecast-metrics span,.forecast-metrics small{font-size:10.5px}.forecast-metrics strong{font-size:15px}.ingredient-use,.change{font-size:12px}.text-link{font-size:12px}.auth-page{font-size:14px}.auth-page .auth-heading h2{font-size:30px}
-.evidence-head-actions{display:flex;align-items:center;gap:8px}.evidence-selected-label{display:inline-flex;padding:4px 7px;border-radius:6px;background:var(--primary-light);color:var(--primary);font-size:10px;font-weight:750;white-space:nowrap}.evidence-card.evidence-updated{animation:evidencePulse .55s ease-out}@keyframes evidencePulse{0%{border-color:var(--primary);box-shadow:0 0 0 3px rgba(24,92,74,.13)}100%{border-color:var(--border);box-shadow:var(--shadow)}}
+body {
+  font-size: 14px;
+}
+.page-heading h1 {
+  font-size: 24px;
+}
+.page-heading p {
+  font-size: 12px;
+}
+.page-intro h2 {
+  font-size: 25px;
+}
+.section-head h2 {
+  font-size: 18px;
+}
+.section-head p,
+.page-intro p {
+  font-size: 12px;
+}
+.nav-label {
+  font-size: 12px;
+}
+.nav-item,
+.nav-item.sub {
+  font-size: 13px;
+}
+.price-card h3,
+.menu-impact h3 {
+  font-size: 15px;
+}
+.price-value {
+  font-size: 23px;
+}
+.data-table {
+  font-size: 11.5px;
+}
+.data-table th {
+  font-size: 11px;
+}
+.data-table th,
+.data-table td {
+  padding: 8px 7px;
+}
+.button,
+.filter-control {
+  font-size: 12px;
+}
+.status-badge {
+  font-size: 10.5px;
+}
+.evidence-block + .evidence-block {
+  margin-top: 12px;
+}
+.evidence-block-title {
+  font-size: 12px;
+  margin: 0 0 7px;
+  font-weight: 750;
+}
+.evidence-block-title span {
+  color: var(--primary);
+}
+.evidence-card .ai-summary {
+  margin-top: 12px;
+  padding: 10px 11px;
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+.forecast-guide {
+  font-size: 11px;
+}
+.forecast-metrics span,
+.forecast-metrics small {
+  font-size: 10.5px;
+}
+.forecast-metrics strong {
+  font-size: 15px;
+}
+.ingredient-use,
+.change {
+  font-size: 12px;
+}
+.text-link {
+  font-size: 12px;
+}
+.auth-page {
+  font-size: 14px;
+}
+.auth-page .auth-heading h2 {
+  font-size: 30px;
+}
+.evidence-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.evidence-selected-label {
+  display: inline-flex;
+  padding: 4px 7px;
+  border-radius: 6px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+.evidence-card.evidence-updated {
+  animation: evidencePulse 0.55s ease-out;
+}
+@keyframes evidencePulse {
+  0% {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(24, 92, 74, 0.13);
+  }
+  100% {
+    border-color: var(--border);
+    box-shadow: var(--shadow);
+  }
+}

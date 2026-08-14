@@ -1,4 +1,11 @@
 /* 요금제 화면 */
-#appMain .pricing-grid{align-items:stretch}
-#appMain .price-plan{display:flex;flex-direction:column}
-#appMain .price-plan .button{margin-top:auto}
+#appMain .pricing-grid {
+  align-items: stretch;
+}
+#appMain .price-plan {
+  display: flex;
+  flex-direction: column;
+}
+#appMain .price-plan .button {
+  margin-top: auto;
+}

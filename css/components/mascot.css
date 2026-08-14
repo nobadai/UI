@@ -1,0 +1,136 @@
+/*
+ * Mascot component
+ * Each transparent PNG has one semantic role. This avoids sprite coordinates,
+ * keeps the character uncropped, and makes future React components portable.
+ */
+.sidebar-insight {
+  display: grid;
+  grid-template-columns: 62px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+}
+
+.sidebar-insight .sidebar-mascot,
+.briefing-mascot,
+.settings-mascot,
+.mascot-crop {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.mascot-binoculars {
+  background-image: url("../../assets/02_actions/06_binoculars.png");
+}
+
+.mascot-magnifier {
+  background-image: url("../../assets/01_actions/02_magnifying_glass.png");
+}
+
+.mascot-shopping-cart {
+  background-image: url("../../assets/02_actions/08_shopping_cart.png");
+}
+
+.mascot-laptop {
+  background-image: url("../../assets/01_actions/04_laptop.png");
+}
+
+.mascot-face-basic {
+  background-image: url("../../assets/03_expressions/12_face_basic.png");
+}
+
+.sidebar-mascot {
+  width: 62px;
+  height: 72px;
+}
+
+.sidebar-insight strong {
+  font-size: 12px;
+  margin: 4px 0;
+}
+
+.sidebar-insight button {
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  padding: 0;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.mascot-briefing {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 22px;
+  padding: 14px 18px 14px 12px;
+  overflow: hidden;
+  background: linear-gradient(105deg, #eff6f2 0%, #ffffff 64%);
+}
+
+.mascot-briefing.compact {
+  margin-bottom: 16px;
+}
+
+.briefing-mascot {
+  width: 88px;
+  height: 88px;
+}
+
+.mascot-briefing .eyebrow {
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.mascot-briefing strong,
+.mascot-briefing p {
+  display: block;
+}
+
+.mascot-briefing strong {
+  margin-top: 4px;
+  font-size: 17px;
+}
+
+.mascot-briefing p {
+  margin: 5px 0 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.settings-mascot {
+  width: 78px;
+  height: 78px;
+  flex: 0 0 78px;
+}
+
+@media (max-width: 700px) {
+  .mascot-briefing {
+    grid-template-columns: 68px minmax(0, 1fr);
+    gap: 11px;
+    padding: 11px;
+  }
+
+  .briefing-mascot {
+    width: 68px;
+    height: 72px;
+  }
+
+  .mascot-briefing strong {
+    font-size: 14px;
+  }
+
+  .mascot-briefing p {
+    display: none;
+  }
+
+  .mascot-briefing .button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}

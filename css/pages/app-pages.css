@@ -1,0 +1,18 @@
+/*
+ * 로그인 후 앱 화면 스타일 번들.
+ * 화면별 파일은 분리해 유지하면서 최초 로딩 때 한 번에 준비해
+ * 라우트 전환 중 스타일이 풀리는 현상을 방지합니다.
+ */
+@import url("dashboard.css?v=20260814-4");
+@import url("ingredient.css?v=20260814-4");
+@import url("detail.css?v=20260814-4");
+@import url("recipes.css?v=20260814-5");
+@import url("menu-cost.css?v=20260814-4");
+@import url("stores.css?v=20260814-4");
+@import url("franchise.css?v=20260814-4");
+@import url("briefings.css?v=20260814-4");
+@import url("alerts.css?v=20260814-4");
+@import url("settings.css?v=20260814-4");
+@import url("plans.css?v=20260814-4");
+@import url("guest.css?v=20260814-4");
+@import url("errors.css?v=20260814-4");

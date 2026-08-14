@@ -1,3 +1,103 @@
-@import url("briefings.css");
-/* 알림 센터 화면 */
-#appMain .timeline-dot{border-color:var(--warning)}
+/* 알림 센터: 임계치 초과 시 즉시 생성되는 대응 이벤트 */
+.alert-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.alert-toolbar button {
+  padding: 9px 13px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text-secondary);
+  font-weight: 700;
+  cursor: pointer;
+}
+.alert-toolbar button.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.alert-list {
+  display: grid;
+  gap: 9px;
+}
+.alert-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  cursor: pointer;
+}
+.alert-item.unread {
+  border-left: 3px solid var(--primary);
+  background: #fbfdfb;
+}
+.alert-item[hidden] {
+  display: none;
+}
+.alert-status {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.alert-status svg {
+  width: 20px;
+  height: 20px;
+}
+.alert-status.status-danger {
+  background: #fff0ed;
+  color: var(--danger);
+}
+.alert-status.status-warning {
+  background: #fff5e5;
+  color: #aa6a00;
+}
+.alert-status.status-success {
+  background: var(--primary-light);
+  color: var(--success);
+}
+.alert-copy h3,
+.alert-copy p {
+  margin: 0;
+}
+.alert-copy h3 {
+  margin: 3px 0;
+  font-size: 15px;
+}
+.alert-copy p,
+.alert-time {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+.alert-item.unread .alert-copy h3:after {
+  content: "새 알림";
+  margin-left: 7px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 9px;
+  vertical-align: 2px;
+}
+@media (max-width: 640px) {
+  .alert-toolbar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+  .alert-toolbar button {
+    white-space: nowrap;
+  }
+  .alert-item {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+  .alert-item > .text-link {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

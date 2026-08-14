@@ -1,44 +1,196 @@
 <!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="원가 캣쳐 회원가입">
-  <title>회원가입 | 원가 캣쳐</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/common.css">
-  <link rel="stylesheet" href="css/pages/auth.css">
-</head>
-<body class="auth-page" data-auth="signup">
-  <main class="auth-shell">
-    <section class="auth-brand-panel">
-      <a class="auth-brand" href="index.html#/dashboard" aria-label="원가 캣쳐 메인으로 이동">
-        <svg viewBox="0 0 44 48" aria-hidden="true"><path d="M22 2 40 9v25L22 46 4 34V9Z" fill="currentColor"/><path d="m13 18 4-5 5 3 5-3 4 5v9c0 6-4 10-9 10s-9-4-9-10Z" fill="#fff"/><circle cx="18.5" cy="24" r="1.5" fill="currentColor"/><circle cx="25.5" cy="24" r="1.5" fill="currentColor"/><path d="M19 29q3 3 6 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <span><strong>원가 캣쳐</strong><small>COST CATCHER</small></span>
-      </a>
-      <div class="auth-brand-copy"><span>FOR FOOD BUSINESS</span><h1>식자재 원가,<br>오르기 전에 확인하세요.</h1><p>외식업·급식·프랜차이즈 운영자를 위한 가격 조기경보와 메뉴 원가 분석을 무료로 체험해보세요.</p></div>
-      <div class="auth-signal-list"><div><b>01</b><span>주요 식자재 모니터링</span></div><div><b>02</b><span>AI 일간·주간 브리핑</span></div><div><b>03</b><span>등록 메뉴 원가 분석</span></div></div>
-    </section>
-    <section class="auth-form-panel signup-panel">
-      <div class="auth-card">
-        <div class="auth-heading"><span>CREATE ACCOUNT</span><h2>회원가입</h2><p>사업자 정보를 입력하고 무료 체험을 시작하세요.</p></div>
-        <form id="authForm" novalidate>
-          <div class="auth-field-row"><label class="auth-field"><span>이름</span><input type="text" id="name" placeholder="홍길동" autocomplete="name" required></label><label class="auth-field"><span>회사명</span><input type="text" id="company" placeholder="(주)캣쳐푸드" autocomplete="organization" required></label></div>
-          <div class="auth-field-row"><label class="auth-field"><span>사업 유형</span><select id="businessType" required><option value="">선택하세요</option><option>외식업 매장</option><option>프랜차이즈 본사</option><option>급식 사업자</option><option>식자재 유통</option></select></label><label class="auth-field"><span>운영 매장 수</span><select id="storeCount" required><option value="">선택하세요</option><option>1개</option><option>2~5개</option><option>6~20개</option><option>21개 이상</option></select></label></div>
-          <label class="auth-field"><span>업무용 이메일</span><input type="email" id="email" placeholder="name@company.com" autocomplete="email" required></label>
-          <label class="auth-field"><span>비밀번호</span><div class="password-field"><input type="password" id="password" placeholder="영문·숫자 포함 8자 이상" autocomplete="new-password" minlength="8" required><button type="button" class="password-toggle" aria-label="비밀번호 표시"><svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg></button></div></label>
-          <label class="auth-field"><span>비밀번호 확인</span><input type="password" id="passwordConfirm" placeholder="비밀번호를 다시 입력하세요" autocomplete="new-password" required></label>
-          <label class="agreement"><input type="checkbox" id="agreement" required><span><b>필수</b> 서비스 이용약관 및 개인정보 처리방침에 동의합니다.</span></label>
-          <p class="auth-message" id="authMessage" aria-live="polite"></p>
-          <button class="auth-submit" type="submit">무료 체험 시작</button>
-        </form>
-        <p class="auth-switch">이미 계정이 있으신가요? <a href="login.html">로그인</a></p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="원가 캣쳐 회원가입" />
+    <title>무료 체험 신청 | 원가 캣쳐</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/pages/auth.css" />
+  </head>
+  <body class="auth-page" data-auth="signup">
+    <main class="auth-shell">
+      <header class="auth-topbar">
+        <a
+          class="auth-brand"
+          href="index.html#/dashboard"
+          aria-label="원가 캣쳐 메인으로 이동"
+          ><svg viewBox="0 0 44 48" aria-hidden="true">
+            <path d="M22 2 40 9v25L22 46 4 34V9Z" fill="currentColor" />
+            <path
+              d="m13 18 4-5 5 3 5-3 4 5v9c0 6-4 10-9 10s-9-4-9-10Z"
+              fill="#fff"
+            />
+            <circle cx="18.5" cy="24" r="1.5" fill="currentColor" />
+            <circle cx="25.5" cy="24" r="1.5" fill="currentColor" /></svg
+          ><span><strong>원가 캣쳐</strong><small>COST CATCHER</small></span></a
+        ><a class="auth-top-link" href="login.html">이미 계정이 있어요</a>
+      </header>
+      <div class="auth-workspace signup-workspace">
+        <section class="auth-product-panel signup-product">
+          <div class="auth-product-copy">
+            <span class="auth-eyebrow">START COST INTELLIGENCE</span>
+            <h1>사업 구조에 맞춰<br />원가 모니터링을 시작하세요.</h1>
+            <p>
+              가입 후 분석 대상 품목과 매장을 설정하고, 메뉴별 예상 원가 영향을
+              확인할 수 있습니다.
+            </p>
+          </div>
+          <div class="onboarding-steps">
+            <div class="active">
+              <b>1</b
+              ><span
+                ><strong>조직 계정 생성</strong
+                ><small>담당자·회사 기본 정보</small></span
+              >
+            </div>
+            <div>
+              <b>2</b
+              ><span
+                ><strong>매장·품목 설정</strong
+                ><small>분석 범위 선택</small></span
+              >
+            </div>
+            <div>
+              <b>3</b
+              ><span
+                ><strong>원가 위험 확인</strong
+                ><small>대시보드와 브리핑</small></span
+              >
+            </div>
+          </div>
+          <div class="signup-benefit">
+            <span>무료 체험에 포함</span>
+            <ul>
+              <li>배추·양파 가격 예측 검증</li>
+              <li>메뉴 원가 영향 분석</li>
+              <li>일간·주간 AI 브리핑</li>
+            </ul>
+          </div>
+          <img
+            class="auth-mascot"
+            src="assets/01_actions/03_wave.png"
+            alt="가입을 안내하는 원가 캣쳐 마스코트"
+          />
+        </section>
+        <section class="auth-form-panel signup-panel">
+          <div class="auth-card">
+            <div class="auth-heading">
+              <span>CREATE ORGANIZATION</span>
+              <h2>무료 체험 신청</h2>
+              <p>실제 운영 환경에 가까운 시안을 위해 사업 정보를 입력합니다.</p>
+            </div>
+            <form id="authForm" novalidate>
+              <div class="auth-field-row">
+                <label class="auth-field"
+                  ><span>담당자 이름</span
+                  ><input
+                    type="text"
+                    id="name"
+                    placeholder="홍길동"
+                    autocomplete="name"
+                    required /></label
+                ><label class="auth-field"
+                  ><span>회사·브랜드명</span
+                  ><input
+                    type="text"
+                    id="company"
+                    placeholder="(주)캣쳐푸드"
+                    autocomplete="organization"
+                    required
+                /></label>
+              </div>
+              <div class="auth-field-row">
+                <label class="auth-field"
+                  ><span>사업 유형</span
+                  ><select id="businessType" required>
+                    <option value="">선택하세요</option>
+                    <option>외식업 매장</option>
+                    <option>프랜차이즈 본사</option>
+                    <option>급식 사업자</option>
+                    <option>식자재 유통</option>
+                  </select></label
+                ><label class="auth-field"
+                  ><span>운영 매장 수</span
+                  ><select id="storeCount" required>
+                    <option value="">선택하세요</option>
+                    <option>1개</option>
+                    <option>2~5개</option>
+                    <option>6~20개</option>
+                    <option>21개 이상</option>
+                  </select></label
+                >
+              </div>
+              <label class="auth-field"
+                ><span>업무용 이메일</span
+                ><input
+                  type="email"
+                  id="email"
+                  placeholder="name@company.com"
+                  autocomplete="email"
+                  required
+              /></label>
+              <div class="auth-field-row">
+                <label class="auth-field"
+                  ><span>비밀번호</span>
+                  <div class="password-field">
+                    <input
+                      type="password"
+                      id="password"
+                      placeholder="8자 이상"
+                      autocomplete="new-password"
+                      minlength="8"
+                      required
+                    /><button
+                      type="button"
+                      class="password-toggle"
+                      aria-label="비밀번호 표시"
+                    >
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+                        />
+                        <circle cx="12" cy="12" r="2.5" />
+                      </svg>
+                    </button></div></label
+                ><label class="auth-field"
+                  ><span>비밀번호 확인</span
+                  ><input
+                    type="password"
+                    id="passwordConfirm"
+                    placeholder="한 번 더 입력"
+                    autocomplete="new-password"
+                    required
+                /></label>
+              </div>
+              <label class="agreement"
+                ><input type="checkbox" id="agreement" required /><span
+                  ><b>필수</b> 서비스 이용약관 및 개인정보 처리방침에
+                  동의합니다.</span
+                ></label
+              >
+              <p class="auth-message" id="authMessage" aria-live="polite"></p>
+              <button class="auth-submit" type="submit">
+                조직 계정 만들기
+              </button>
+            </form>
+            <p class="auth-switch">
+              이미 계정이 있으신가요? <a href="login.html">로그인</a>
+            </p>
+          </div>
+        </section>
       </div>
-      <p class="auth-footer">© 2026 Cost Catcher. UI Prototype</p>
-    </section>
-  </main>
-  <script src="js/auth.js"></script>
-</body>
+      <footer class="auth-footer">
+        <span>© 2026 Cost Catcher</span
+        ><span>Prototype · 실제 결제가 진행되지 않습니다.</span>
+      </footer>
+    </main>
+    <script src="js/auth.js"></script>
+  </body>
 </html>

@@ -1,0 +1,137 @@
+/* Mobile navigation and touch-layout refinements */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  body {
+    padding-bottom: 68px;
+  }
+
+  .mobile-bottom-nav {
+    position: fixed;
+    z-index: 900;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    height: 64px;
+    padding: 5px max(8px, env(safe-area-inset-right))
+      calc(5px + env(safe-area-inset-bottom))
+      max(8px, env(safe-area-inset-left));
+    border-top: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 -8px 24px rgba(31, 52, 43, 0.08);
+    backdrop-filter: blur(14px);
+  }
+
+  .mobile-bottom-nav button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  .mobile-bottom-nav button.active {
+    color: var(--primary);
+    background: var(--primary-light);
+    font-weight: 750;
+  }
+
+  .mobile-bottom-nav svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .chat-launcher {
+    right: 12px;
+    bottom: 76px;
+  }
+
+  .section-actions {
+    width: 100%;
+  }
+
+  .section-actions .filter-control {
+    min-width: 0;
+    width: 50%;
+  }
+
+  .price-grid {
+    display: flex;
+    gap: 10px;
+    margin-right: -12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .price-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .price-card,
+  .price-card:nth-child(n) {
+    display: grid;
+    flex: 0 0 225px;
+    scroll-snap-align: start;
+  }
+
+  .chart-toolbar {
+    width: 100%;
+  }
+
+  .chart-toolbar > .filter-control {
+    flex: 1 1 120px;
+  }
+
+  .chart-wrap {
+    min-width: 610px;
+  }
+
+  .chart-card {
+    overflow-x: auto;
+  }
+
+  .forecast-panel,
+  .chart-card > .section-head {
+    min-width: 0;
+  }
+
+  .chart-card .chart-wrap + .forecast-panel {
+    position: sticky;
+    left: 0;
+  }
+
+  .data-table {
+    font-size: 12px;
+  }
+
+  .settings-menu {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 8px;
+    scroll-snap-type: x proximity;
+  }
+
+  .settings-menu button {
+    flex: 0 0 auto;
+    width: auto;
+    white-space: nowrap;
+    scroll-snap-align: start;
+  }
+}

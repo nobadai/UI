@@ -1,8 +1,134 @@
 /* 대시보드 전용: 가격 카드 → 예측/근거 → 메뉴 영향 흐름 */
-#appMain .price-grid{align-items:stretch}
-#appMain .dashboard-middle{align-items:stretch}
-#appMain .dashboard-middle>.card{min-width:0}
-#appMain .evidence-card .section-head{margin-bottom:10px}
-#appMain .evidence-card .data-table{table-layout:auto}
-@media(max-width:1279px){#appMain .dashboard-middle{grid-template-columns:minmax(0,1.45fr) minmax(340px,1fr)}}
-@media(max-width:1050px){#appMain .dashboard-middle{grid-template-columns:1fr}}
+#appMain .price-grid {
+  align-items: stretch;
+}
+#appMain .dashboard-middle {
+  align-items: stretch;
+}
+#appMain .dashboard-middle > .card {
+  min-width: 0;
+}
+#appMain .evidence-card .section-head {
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+#appMain .evidence-card .evidence-head-actions {
+  flex: 0 0 auto;
+}
+#appMain .evidence-card .evidence-head-actions .text-link {
+  white-space: nowrap;
+}
+#appMain .evidence-card .data-table {
+  table-layout: auto;
+}
+.prediction-coverage {
+  display: inline-flex;
+  margin-left: 5px;
+  padding: 2px 5px;
+  border-radius: 5px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 9px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+.evidence-provenance {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: -2px 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.evidence-provenance span,
+.evidence-provenance b {
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: #f4f7f5;
+  color: var(--text-secondary);
+  font-size: 9.5px;
+  font-weight: 600;
+}
+.evidence-provenance b {
+  background: #fff4df;
+  color: #9a6500;
+}
+.evidence-signal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 12px;
+}
+.evidence-signal-grid > div {
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f8faf8;
+}
+.evidence-signal-grid span,
+.evidence-signal-grid small {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+.evidence-signal-grid strong {
+  display: block;
+  margin: 4px 0 2px;
+  font-size: 18px;
+}
+.evidence-view-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+  padding: 3px;
+  border-radius: 9px;
+  background: #f1f4f2;
+}
+.evidence-view-tabs button {
+  flex: 1;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 700;
+  cursor: pointer;
+}
+.evidence-view-tabs button.active {
+  background: #fff;
+  color: var(--primary);
+  box-shadow: 0 1px 4px rgba(16, 69, 54, 0.08);
+}
+.evidence-block {
+  min-height: 190px;
+}
+@media (max-width: 540px) {
+  #appMain .evidence-card .section-head {
+    display: block;
+  }
+  #appMain .evidence-card .evidence-head-actions {
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  .evidence-signal-grid {
+    grid-template-columns: 1fr;
+  }
+  .evidence-signal-grid > div {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+  .evidence-signal-grid small {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 1279px) {
+  #appMain .dashboard-middle {
+    grid-template-columns: minmax(0, 1.45fr) minmax(340px, 1fr);
+  }
+}
+@media (max-width: 1050px) {
+  #appMain .dashboard-middle {
+    grid-template-columns: 1fr;
+  }
+}

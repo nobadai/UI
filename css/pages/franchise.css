@@ -1,2 +1,6 @@
 @import url("stores.css");
-/* 가맹점 관리 화면 */
+
+/* Franchise overview */
+#appMain .mascot-briefing + .page-intro {
+  margin-top: 4px;
+}
