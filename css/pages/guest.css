@@ -1,9 +1,0 @@
-/* 비회원 소개 화면 */
-#appMain .guest-hero {
-  min-height: 520px;
-}
-@media (max-width: 900px) {
-  #appMain .guest-hero {
-    min-height: 0;
-  }
-}

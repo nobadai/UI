@@ -84,7 +84,7 @@
         return;
       }
       localStorage.setItem(
-        "costCatcherUser",
+        "agriSimUser",
         JSON.stringify({
           name: document.getElementById("name").value,
           company: document.getElementById("company").value,

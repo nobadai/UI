@@ -15,7 +15,7 @@
     bottom: 0;
     left: 0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     height: 64px;
     padding: 5px max(8px, env(safe-area-inset-right))
       calc(5px + env(safe-area-inset-bottom))
@@ -85,7 +85,6 @@
 
   .price-card,
   .price-card:nth-child(n) {
-    display: grid;
     flex: 0 0 225px;
     scroll-snap-align: start;
   }

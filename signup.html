@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="description" content="원가 캣쳐 회원가입" />
-    <title>무료 체험 신청 | 원가 캣쳐</title>
+    <meta name="description" content="농산 캣쳐 회원가입" />
+    <title>회원가입 | 농산 캣쳐</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -20,7 +20,7 @@
         <a
           class="auth-brand"
           href="index.html#/dashboard"
-          aria-label="원가 캣쳐 메인으로 이동"
+          aria-label="농산 캣쳐 메인으로 이동"
           ><svg viewBox="0 0 44 48" aria-hidden="true">
             <path d="M22 2 40 9v25L22 46 4 34V9Z" fill="currentColor" />
             <path
@@ -29,62 +29,64 @@
             />
             <circle cx="18.5" cy="24" r="1.5" fill="currentColor" />
             <circle cx="25.5" cy="24" r="1.5" fill="currentColor" /></svg
-          ><span><strong>원가 캣쳐</strong><small>COST CATCHER</small></span></a
+          ><span><strong>농산 캣쳐</strong><small>AGRI CATCHER</small></span></a
         ><a class="auth-top-link" href="login.html">이미 계정이 있어요</a>
       </header>
       <div class="auth-workspace signup-workspace">
         <section class="auth-product-panel signup-product">
           <div class="auth-product-copy">
-            <span class="auth-eyebrow">START COST INTELLIGENCE</span>
-            <h1>사업 구조에 맞춰<br />원가 모니터링을 시작하세요.</h1>
+            <span class="auth-eyebrow">JOIN THE OPEN MARKET</span>
+            <h1>산지 물량을<br />직접 확인하고 거래하세요.</h1>
             <p>
-              가입 후 분석 대상 품목과 매장을 설정하고, 메뉴별 예상 원가 영향을
-              확인할 수 있습니다.
+              가입 후 오픈 채팅방에서 당일 물량을 확인하고, 산지 계약과 정산
+              문서를 메일로 받아볼 수 있습니다.
             </p>
           </div>
           <div class="onboarding-steps">
             <div class="active">
               <b>1</b
               ><span
-                ><strong>조직 계정 생성</strong
-                ><small>담당자·회사 기본 정보</small></span
+                ><strong>계정 생성</strong
+                ><small>담당자·상호 기본 정보</small></span
               >
             </div>
             <div>
               <b>2</b
               ><span
-                ><strong>매장·품목 설정</strong
-                ><small>분석 범위 선택</small></span
+                ><strong>메일 인증</strong><small>OAuth 2.0도 지원</small></span
               >
             </div>
             <div>
               <b>3</b
               ><span
-                ><strong>원가 위험 확인</strong
-                ><small>대시보드와 브리핑</small></span
+                ><strong>오픈 채팅방 참여</strong
+                ><small>물량 확인과 입찰</small></span
               >
             </div>
           </div>
           <div class="signup-benefit">
-            <span>무료 체험에 포함</span>
+            <span>가입하면 이용할 수 있어요</span>
             <ul>
-              <li>배추·양파 가격 예측 검증</li>
-              <li>메뉴 원가 영향 분석</li>
-              <li>일간·주간 AI 브리핑</li>
+              <li>당일 물량 오픈 채팅 입찰</li>
+              <li>산지 계약 문서 메일 수신</li>
+              <li>회사 공개 재무제표 열람</li>
             </ul>
           </div>
           <img
             class="auth-mascot"
             src="assets/01_actions/03_wave.png"
-            alt="가입을 안내하는 원가 캣쳐 마스코트"
+            alt="가입을 안내하는 농산 캣쳐 마스코트"
           />
         </section>
         <section class="auth-form-panel signup-panel">
           <div class="auth-card">
             <div class="auth-heading">
-              <span>CREATE ORGANIZATION</span>
-              <h2>무료 체험 신청</h2>
-              <p>실제 운영 환경에 가까운 시안을 위해 사업 정보를 입력합니다.</p>
+              <span>CREATE ACCOUNT</span>
+              <h2>회원가입</h2>
+              <p>
+                거래에 필요한 최소 정보만 입력합니다. 프로토타입에서는 저장되지
+                않습니다.
+              </p>
             </div>
             <form id="authForm" novalidate>
               <div class="auth-field-row">
@@ -97,11 +99,11 @@
                     autocomplete="name"
                     required /></label
                 ><label class="auth-field"
-                  ><span>회사·브랜드명</span
+                  ><span>상호명</span
                   ><input
                     type="text"
                     id="company"
-                    placeholder="(주)캣쳐푸드"
+                    placeholder="예: 새벽장터"
                     autocomplete="organization"
                     required
                 /></label>
@@ -111,19 +113,20 @@
                   ><span>사업 유형</span
                   ><select id="businessType" required>
                     <option value="">선택하세요</option>
-                    <option>외식업 매장</option>
-                    <option>프랜차이즈 본사</option>
-                    <option>급식 사업자</option>
-                    <option>식자재 유통</option>
+                    <option>1차 소매</option>
+                    <option>급식소</option>
+                    <option>대형마트</option>
+                    <option>대형식당</option>
+                    <option>가공 공장</option>
                   </select></label
                 ><label class="auth-field"
-                  ><span>운영 매장 수</span
+                  ><span>월 예상 거래량</span
                   ><select id="storeCount" required>
                     <option value="">선택하세요</option>
-                    <option>1개</option>
-                    <option>2~5개</option>
-                    <option>6~20개</option>
-                    <option>21개 이상</option>
+                    <option>1톤 미만</option>
+                    <option>1~5톤</option>
+                    <option>6~20톤</option>
+                    <option>21톤 이상</option>
                   </select></label
                 >
               </div>
@@ -187,7 +190,7 @@
         </section>
       </div>
       <footer class="auth-footer">
-        <span>© 2026 Cost Catcher</span
+        <span>© 2026 Agri Catcher (가칭)</span
         ><span>Prototype · 실제 결제가 진행되지 않습니다.</span>
       </footer>
     </main>

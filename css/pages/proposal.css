@@ -1,0 +1,478 @@
+/* 매입 — 금일 제안 상세 / 제안 이력 / 시장 시세 / 매입 설정 */
+.stage-block {
+  margin-bottom: 26px;
+}
+#appMain .stage-pair {
+  align-items: start;
+  margin-top: 14px;
+}
+
+/* 사람 승인 카드 */
+.approval-card {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 18px;
+  margin-bottom: 22px;
+  border-color: #c3d8cd;
+  background: linear-gradient(105deg, #eff6f2 0%, #ffffff 62%);
+}
+.approval-copy .eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  color: var(--primary);
+}
+.approval-copy strong {
+  display: block;
+  margin: 5px 0 3px;
+  font-size: 17px;
+}
+.approval-copy p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.approval-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* T1 시나리오 */
+.scenario-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.scenario-card {
+  padding: 16px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.scenario-card:hover {
+  border-color: #b8cec4;
+}
+.scenario-card.active {
+  border-color: var(--primary);
+  box-shadow: 0 6px 18px rgba(24, 92, 74, 0.12);
+}
+.scenario-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.scenario-head h3 {
+  margin: 0;
+  font-size: 15px;
+}
+.scenario-figure {
+  margin: 12px 0 10px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #f7faf8;
+  border: 1px solid var(--border);
+}
+.scenario-figure strong {
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  color: var(--primary);
+}
+.scenario-figure span {
+  margin-left: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.scenario-figure small {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.scenario-card p {
+  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.exceed-reason {
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: var(--warning-bg);
+  border: 1px solid #f2e0bd;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #8a6100;
+}
+.exceed-reason strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.ref-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+/* T2 부서 제약 회신 */
+.verdict-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.verdict-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 3px solid var(--border);
+}
+.verdict-card.agent-logistics {
+  border-top-color: #3d78bd;
+}
+.verdict-card.agent-sales {
+  border-top-color: var(--warning);
+}
+.verdict-card.agent-finance {
+  border-top-color: var(--primary);
+}
+.verdict-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.verdict-agent {
+  display: block;
+  font-size: 15px;
+  font-weight: 750;
+}
+.verdict-head small {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.verdict-figures {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 11px 12px;
+  border-radius: 10px;
+  background: #f8faf8;
+  border: 1px solid var(--border);
+}
+.verdict-figures > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.verdict-figures dt {
+  font-family: "Inter", monospace;
+  font-size: 10.5px;
+  color: var(--text-secondary);
+}
+.verdict-figures dd {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.constraint-block {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+.constraint-block strong {
+  display: block;
+  margin-bottom: 4px;
+  font-family: "Inter", monospace;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+}
+.constraint-block ul {
+  margin: 0;
+  padding-left: 16px;
+}
+.constraint-block.hard {
+  background: var(--danger-bg);
+  border: 1px solid #f4d2cd;
+  color: #a33b30;
+}
+.constraint-block.soft {
+  background: var(--warning-bg);
+  border: 1px solid #f2e0bd;
+  color: #8a6100;
+}
+.verdict-reasoning strong {
+  display: block;
+  margin-bottom: 4px;
+  font-family: "Inter", monospace;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.verdict-reasoning p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.evidence-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.evidence-chip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.evidence-chip b {
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* v0.5 신설 필드 */
+.adjustment-block {
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid #cfe2d8;
+  background: #f4faf6;
+}
+.adjustment-block.empty {
+  border-style: dashed;
+  background: #fafbfa;
+  border-color: var(--border);
+}
+.adjustment-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.adjustment-block > strong {
+  display: block;
+  font-family: "Inter", monospace;
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.adjustment-block p {
+  margin: 0 0 9px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  font-weight: 600;
+}
+.policy-flag {
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: 6px;
+  padding: 3px 7px;
+}
+.policy-flag.pass {
+  background: var(--success-bg);
+  color: var(--success);
+}
+.policy-flag.fail {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.adjustment-note {
+  display: block;
+  margin-top: 8px;
+  font-size: 10.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+.verdict-foot {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+  font-size: 10.5px;
+  color: var(--text-secondary);
+}
+.verdict-foot.fail {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+/* T3 조정 */
+.orchestration-card,
+.feedback-card,
+.critic-card {
+  padding: 17px;
+}
+.split-plan {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin: 13px 0;
+}
+.split-plan > div {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: #f8faf8;
+}
+.split-plan span {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--primary);
+}
+.split-plan strong {
+  display: block;
+  margin: 4px 0 2px;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+.split-plan small {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.feedback-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 12px;
+}
+.feedback-list li {
+  padding-left: 4px;
+}
+.feedback-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.feedback-meta b {
+  font-size: 12px;
+  color: var(--primary);
+}
+.feedback-meta span {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.feedback-list strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+.feedback-list p {
+  margin: 3px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.boundary-note {
+  margin-top: 13px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  background: #f4f7f5;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.boundary-note code {
+  font-family: "Inter", monospace;
+  font-size: 11px;
+  color: var(--primary);
+}
+
+/* 매입 설정 */
+.config-list {
+  display: grid;
+  gap: 10px;
+}
+.config-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+}
+.config-row strong {
+  display: block;
+  font-size: 13px;
+}
+.config-row small {
+  display: block;
+  margin: 3px 0 5px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.config-row.locked {
+  background: #fafbfa;
+}
+.config-row.locked input {
+  background: #f2f5f3;
+  color: var(--text-secondary);
+}
+
+/* 시장 시세 · 제안 이력 */
+.row-spark {
+  width: 110px;
+  height: 30px;
+}
+.row-spark svg {
+  width: 100%;
+  height: 100%;
+}
+#appMain .market-row,
+#appMain .history-row {
+  cursor: pointer;
+}
+#appMain .market-row:hover td,
+#appMain .history-row:hover td {
+  background: #f7faf8;
+}
+.type-card.type-retail strong {
+  color: var(--blue);
+}
+.type-card.type-wholesale strong {
+  color: var(--primary);
+}
+.type-card.type-auction strong {
+  color: #b7791f;
+}
+
+@media (max-width: 1200px) {
+  .verdict-grid,
+  .scenario-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 860px) {
+  .verdict-grid,
+  .scenario-grid {
+    grid-template-columns: 1fr;
+  }
+  #appMain .stage-pair {
+    grid-template-columns: 1fr;
+  }
+  .approval-card {
+    grid-template-columns: 62px minmax(0, 1fr);
+  }
+  .approval-actions {
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+  }
+  .approval-actions .button {
+    flex: 1 1 auto;
+  }
+  .config-row {
+    grid-template-columns: 1fr;
+  }
+}

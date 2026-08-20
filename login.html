@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="description" content="원가 캣쳐 로그인" />
-    <title>로그인 | 원가 캣쳐</title>
+    <meta name="description" content="농산 캣쳐 관리자 로그인" />
+    <title>로그인 | 농산 캣쳐</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -20,7 +20,7 @@
         <a
           class="auth-brand"
           href="index.html#/dashboard"
-          aria-label="원가 캣쳐 메인으로 이동"
+          aria-label="농산 캣쳐 메인으로 이동"
           ><svg viewBox="0 0 44 48" aria-hidden="true">
             <path d="M22 2 40 9v25L22 46 4 34V9Z" fill="currentColor" />
             <path
@@ -36,51 +36,53 @@
               stroke-width="1.5"
               stroke-linecap="round"
             /></svg
-          ><span><strong>원가 캣쳐</strong><small>COST CATCHER</small></span></a
+          ><span><strong>농산 캣쳐</strong><small>AGRI CATCHER</small></span></a
         >
-        <span class="auth-security">B2B COST INTELLIGENCE</span>
+        <span class="auth-security">AGRI DISTRIBUTION SIMULATION</span>
       </header>
       <div class="auth-workspace">
         <section class="auth-product-panel">
           <div class="auth-product-copy">
-            <span class="auth-eyebrow">AI EARLY WARNING</span>
-            <h1>오늘의 원가 위험을<br />먼저 확인하세요.</h1>
+            <span class="auth-eyebrow">MULTI-AGENT PIPELINE</span>
+            <h1>오늘의 매입 판단을<br />근거와 함께 확인하세요.</h1>
             <p>
-              시장 가격만 보는 것이 아니라 기상·생산·출하·수급 데이터를 함께
-              분석해 메뉴와 매장에 미칠 영향을 알려드립니다.
+              ML 가격 예측을 매입 의사결정 신호로 쓰고, 재고·영업·재무 세 부서의
+              제약 회신을 결합해 오늘의 매입 수량을 결정합니다.
             </p>
           </div>
           <div class="auth-market-board">
             <div class="auth-board-head">
-              <span>오늘 감지된 시장 신호</span><b>2026.08.13 기준</b>
+              <span>오늘의 파이프라인</span><b>2026.08.20 기준</b>
             </div>
             <div class="auth-signal danger">
-              <span>배추</span><strong>3주 후 상승 가능성 78%</strong
-              ><b>위험</b>
+              <span>T1</span><strong>매입 초안 30톤 · 2,400만원</strong
+              ><b>예산 초과</b>
             </div>
             <div class="auth-signal warning">
-              <span>대파</span><strong>출하량 감소 신호 감지</strong><b>주의</b>
+              <span>T2</span><strong>3부서 제약 회신 · 변경안 3건</strong
+              ><b>조건부</b>
             </div>
             <div class="auth-signal success">
-              <span>양파</span><strong>예측 범위 내 안정</strong><b>안정</b>
+              <span>T3</span><strong>조정 12톤 · Critic PASS</strong
+              ><b>승인 대기</b>
             </div>
           </div>
           <div class="auth-data-flow">
-            <span>기상·작황</span><i>+</i><span>생산·출하</span><i>+</i
-            ><span>수급·정책</span><b>AI 분석 → 메뉴 원가 영향</b>
+            <span>재고·물류</span><i>+</i><span>영업</span><i>+</i
+            ><span>재무</span><b>오케스트레이터 결합 → 사람 승인</b>
           </div>
           <img
             class="auth-mascot"
             src="assets/01_actions/02_magnifying_glass.png"
-            alt="가격 신호를 찾는 원가 캣쳐 마스코트"
+            alt="가격 신호를 찾는 농산 캣쳐 마스코트"
           />
         </section>
         <section class="auth-form-panel">
           <div class="auth-card">
             <div class="auth-heading">
               <span>WELCOME BACK</span>
-              <h2>원가 캣쳐 로그인</h2>
-              <p>조직 계정으로 원가 위험 대시보드를 확인하세요.</p>
+              <h2>농산 캣쳐 로그인</h2>
+              <p>관리자 계정으로 오늘의 매입 제안과 승인 화면을 확인하세요.</p>
             </div>
             <form id="authForm" novalidate>
               <label class="auth-field"
@@ -139,15 +141,15 @@
               </button>
             </div>
             <p class="auth-switch">
-              원가 캣쳐를 처음 이용하시나요?
-              <a href="signup.html">무료 체험 신청</a>
+              계정이 아직 없으신가요?
+              <a href="signup.html">회원가입</a>
             </p>
           </div>
         </section>
       </div>
       <footer class="auth-footer">
-        <span>© 2026 Cost Catcher</span
-        ><a href="index.html#/guest">서비스 미리보기</a>
+        <span>© 2026 Agri Catcher (가칭)</span
+        ><a href="index.html#/external">외부용 화면 미리보기</a>
       </footer>
     </main>
     <script src="js/auth.js"></script>

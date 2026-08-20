@@ -1,94 +1,213 @@
-function plansPage() {
-  return html`<div class="content">
-    <div class="page-intro" style="justify-content:center;text-align:center">
+// -----------------------------------------------------------------------------
+// 프로토타입 — 외부용 화면 / 시뮬레이션 페르소나 / 오류 화면 미리보기
+// -----------------------------------------------------------------------------
+
+function externalPage() {
+  const external = MOCK.external;
+  const company = readStoredSettings("agriSim.company", MOCK.company);
+  return html`<div class="content external-page">
+    ${pageIntro(
+      "외부용 화면",
+      "로그인·회원가입 이전에 외부 사용자에게 공개되는 화면입니다 (정의서 §6.2).",
+      html`<div class="section-actions">
+        <a class="button ghost" href="login.html">로그인 화면 열기</a
+        ><a class="button secondary" href="signup.html">회원가입 화면 열기</a>
+      </div>`,
+    )}
+
+    <section class="guest-hero card">
       <div>
-        <h2>사업 규모에 맞는 원가 인텔리전스</h2>
-        <p>
-          모든 가격과 기능은 시안용 Mock Data이며 언제든 변경할 수 있습니다.
-        </p>
+        <span class="status-badge status-success">산지 직거래 · 오픈 입찰</span>
+        <h2>${escapeHtml(company.name)}의<br />오늘 물량을 공개합니다.</h2>
+        <p>${escapeHtml(company.intro)}</p>
+        <div class="market-mini">
+          ${MOCK.items
+            .slice(0, 3)
+            .map(
+              (item) =>
+                html`<span
+                  >${item.name}
+                  <b class="${changeMark(item.change).tone}"
+                    >${changeMark(item.change).mark}
+                    ${changeMark(item.change).text}</b
+                  ></span
+                >`,
+            )
+            .join("")}
+        </div>
+        <button class="button primary" type="button" id="externalJoin">
+          오픈 채팅방 참여하기
+        </button>
       </div>
+      <div class="external-visual">
+        <img
+          src="assets/02_actions/08_shopping_cart.png"
+          alt="물량을 옮기는 마스코트"
+          loading="lazy"
+        />
+      </div>
+    </section>
+
+    <div class="detail-grid">
+      ${sectionCard({
+        title: "오픈 채팅방",
+        desc: "유입을 유도하고 판매량을 유동적으로 조절합니다. 1차 소매 페르소나가 입찰 대상입니다.",
+        className: "chat-board-card",
+        body: html`<ul class="chat-board">
+          ${external.chatBids
+            .map(
+              (bid) =>
+                html`<li>
+                  <span class="chat-board-time">${bid.time}</span>
+                  <div>
+                    <strong>${escapeHtml(bid.nick)}</strong>
+                    <p>${escapeHtml(bid.message)}</p>
+                  </div>
+                  <span
+                    class="status-badge status-${bid.state === "검토 중"
+                      ? "warning"
+                      : "success"}"
+                    >${bid.state}</span
+                  >
+                </li>`,
+            )
+            .join("")}
+        </ul>`,
+      })}
+      ${sectionCard({
+        title: "산지 계약",
+        desc: "계약 체결 문서를 메일로 발송합니다.",
+        body: dataTable(
+          ["계약 번호", "산지", "품목", "물량", "상태"],
+          external.contracts
+            .map(
+              (contract) =>
+                html`<tr>
+                  <td><code class="ref-id">${contract.no}</code></td>
+                  <td><strong>${contract.farm}</strong></td>
+                  <td>${contract.item}</td>
+                  <td>${contract.volume}</td>
+                  <td>
+                    <span
+                      class="status-badge status-${contract.state ===
+                      "서명 대기"
+                        ? "warning"
+                        : "success"}"
+                      >${contract.state}</span
+                    >
+                  </td>
+                </tr>`,
+            )
+            .join(""),
+        ),
+      })}
     </div>
-    <div class="cards pricing-grid">
-      ${MOCK.plans
-        .map(
-          (p) =>
-            html`<article
-              class="card price-plan ${p.featured ? "recommended" : ""}"
+
+    <div class="detail-grid">
+      ${sectionCard({
+        title: "재무제표 확인",
+        desc: "회사 공개데이터로 열람할 수 있는 분기 실적입니다.",
+        body: dataTable(
+          ["기간", "매출", "매출원가", "영업이익", "이익률"],
+          external.statements
+            .map(
+              (row) =>
+                html`<tr>
+                  <td><strong>${row.period}</strong></td>
+                  <td>${money(row.revenue)}</td>
+                  <td>${money(row.cost)}</td>
+                  <td class="positive">${money(row.profit)}</td>
+                  <td>${((row.profit / row.revenue) * 100).toFixed(1)}%</td>
+                </tr>`,
+            )
+            .join(""),
+        ),
+      })}
+      ${sectionCard({
+        title: "사용자 인증 · 외부 페이지 관리",
+        desc: "인증 수단과 외부 페이지 콘텐츠는 관리자 화면의 회사 관리와 연동됩니다.",
+        body: html`<ul class="external-feature-list">
+          <li>
+            <strong>메일 인증</strong><span>회원가입 시 인증 메일 발송</span>
+          </li>
+          <li><strong>OAuth 2.0</strong><span>외부 계정 연동 로그인</span></li>
+          <li>
+            <strong>소개글</strong
+            ><span>${escapeHtml(company.intro.slice(0, 40))}…</span>
+          </li>
+          <li>
+            <strong>대표 이미지</strong
+            ><span>외부 페이지 관리 테이블에서 관리</span>
+          </li>
+          <li>
+            <strong>회사 정보</strong
+            ><span
+              >${escapeHtml(company.phone)} · ${escapeHtml(company.email)}</span
             >
-              ${p.featured
-                ? '<span class="recommend-label">가장 많이 선택</span>'
-                : ""}
-              <h3>${p.name}</h3>
-              <p>${p.desc}</p>
-              <div class="plan-price">
-                ${p.price}<small
-                  >${p.price.includes("월") ? " / VAT 별도" : ""}</small
-                >
-              </div>
-              <ul class="feature-list">
-                ${p.features.map((f) => html`<li>${f}</li>`).join("")}
-              </ul>
-              <button
-                class="button ${p.featured ? "primary" : "ghost"}"
-                data-plan="${p.name}"
-              >
-                ${p.price === "별도 문의" ? "도입 문의" : "플랜 선택"}
-              </button>
-            </article>`,
-        )
-        .join("")}
+          </li>
+        </ul>`,
+      })}
     </div>
   </div>`;
 }
-function guestPage() {
+
+function personasPage() {
+  const defined = MOCK.personas.filter((p) => p.state === "정의 완료").length;
   return html`<div class="content">
-    <section class="guest-hero">
-      <div>
-        <span class="status-badge status-success">식자재 원가 조기경보</span>
-        <h2>원가 변동을<br />가격보다 먼저 포착하세요.</h2>
-        <p>
-          기상·작황·생산·출하·수급·정책 데이터를 AI가 함께 분석해, 사업자의 메뉴
-          원가에 미칠 영향까지 연결합니다.
-        </p>
-        <div class="market-mini">
-          <span>배추 <b class="negative">▲ 4.2%</b></span
-          ><span>대파 <b class="negative">▲ 1.8%</b></span
-          ><span>양파 <b>→ 안정</b></span>
-        </div>
-        <button class="button primary" id="freeStart">무료로 시작하기</button>
-      </div>
-      <div class="preview-locked">
-        <div class="fake-chart chart-wrap" id="guestChart"></div>
-        <div class="lock-overlay">
-          <div>
-            <strong>AI 예측과 상세 근거를 확인하려면<br />로그인하세요.</strong
-            ><button class="button primary" id="loginPreview">
-              로그인하고 확인
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-    <div class="section-head" style="margin-top:28px">
-      <div>
-        <h2>데이터에서 대응까지, 하나의 흐름으로</h2>
-        <p>대시보드 → 상세 근거 → 메뉴 원가 영향</p>
-      </div>
-    </div>
-    <div class="cards cost-grid">
-      <article class="card kpi-card">
-        <span>01 · 시장 감지</span><strong>이상 신호 포착</strong
-        ><small>7개 데이터 영역을 함께 분석</small>
-      </article>
-      <article class="card kpi-card">
-        <span>02 · 근거 확인</span><strong>설명 가능한 예측</strong
-        ><small>가격 변화의 이유를 정량 데이터로 확인</small>
-      </article>
-      <article class="card kpi-card">
-        <span>03 · 사업 대응</span><strong>메뉴 원가 영향</strong
-        ><small>등록 메뉴와 매장까지 영향 연결</small>
-      </article>
-    </div>
+    ${pageIntro(
+      "시뮬레이션 페르소나",
+      "재무의 고정지출과 수요를 산정하려면 페르소나 정의가 선행되어야 합니다 (정의서 §7).",
+      html`<span class="status-badge status-warning">
+        미정의 ${MOCK.personas.length - defined}개
+      </span>`,
+    )}
+    ${kpiCards([
+      {
+        label: "전체 페르소나",
+        value: `${MOCK.personas.length}개`,
+        sub: "정의서 §7 기준",
+      },
+      {
+        label: "정의 완료",
+        value: `${defined}개`,
+        sub: "고정지출·수요 산정 가능",
+        tone: "success",
+      },
+      {
+        label: "정의 필요",
+        value: `${MOCK.personas.length - defined}개`,
+        sub: "대형마트 · 대형식당 등",
+        tone: "danger",
+      },
+      { label: "고정지출 반영", value: "3개", sub: "창고 · 운송 · 급여" },
+    ])}
+    ${sectionCard({
+      title: "페르소나 정의 상태",
+      desc: "정의가 끝나지 않은 페르소나는 재무 지출 상세의 고정지출 산정에 반영되지 않습니다.",
+      body: dataTable(
+        ["페르소나", "역할", "상태", "비고"],
+        MOCK.personas
+          .map(
+            (persona) =>
+              html`<tr>
+                <td><strong>${persona.name}</strong></td>
+                <td>${persona.role}</td>
+                <td>
+                  <span
+                    class="status-badge status-${persona.state === "정의 완료"
+                      ? "success"
+                      : persona.state === "정의 필요"
+                        ? "danger"
+                        : "warning"}"
+                    >${persona.state}</span
+                  >
+                </td>
+                <td>${persona.note}</td>
+              </tr>`,
+          )
+          .join(""),
+      ),
+    })}
   </div>`;
 }
 
@@ -104,7 +223,7 @@ function errorsPage() {
     [
       "403",
       "접근 권한 없음",
-      "사용자 권한 제한",
+      "최상위 관리자 전용 화면",
       "03_expressions/18_face_sad.png",
     ],
     [
@@ -133,21 +252,16 @@ function errorsPage() {
     ],
   ];
   return html`<div class="content">
-    <div class="page-intro">
-      <div>
-        <h2>오류 화면 미리보기</h2>
-        <p>
-          인증, 권한, 서버, 네트워크 상황별 사용자 안내 화면을 직접 확인할 수
-          있습니다.
-        </p>
-      </div>
-      <span class="status-badge status-success">Prototype QA</span>
-    </div>
+    ${pageIntro(
+      "오류 화면 미리보기",
+      "인증, 권한, 서버, 네트워크 상황별 사용자 안내 화면을 직접 확인할 수 있습니다.",
+      html`<span class="status-badge status-success">Prototype QA</span>`,
+    )}
     <section class="card error-preview-guide">
       <div
         class="preview-guide-mascot mascot-laptop"
         role="img"
-        aria-label="오류 화면을 점검하는 원가 캣쳐 마스코트"
+        aria-label="오류 화면을 점검하는 마스코트"
       ></div>
       <div>
         <span class="eyebrow">ERROR EXPERIENCE</span>
@@ -176,7 +290,3 @@ function errorsPage() {
     </div>
   </div>`;
 }
-
-// -----------------------------------------------------------------------------
-// Page-specific event binding
-// -----------------------------------------------------------------------------

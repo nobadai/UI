@@ -1,368 +1,292 @@
-function updateForecastSelection() {
-  const target = $("#mainChart"),
-    svg = target?.querySelector("svg");
-  if (!svg) return;
-  svg.querySelector(".forecast-selection")?.remove();
-}
+// -----------------------------------------------------------------------------
+// 화면별 인터랙션 연결
+// bindPage()에 직접 누적하지 않고 기능별 바인더로 분리합니다.
+// -----------------------------------------------------------------------------
 
 function bindPage(page) {
-  setupChartControls();
-  bindChartInteractions(page);
-  bindEvidenceInteractions();
-  bindDashboardFilters();
-  bindRecipePage(page);
-  bindStorePage();
-  bindBriefingPage();
-  bindAlertPage();
+  setupCharts(page);
+  bindItemSwitching(page);
+  bindForecastControls(page);
+  bindProposalPage();
+  bindHistoryPage();
+  bindMarketPage();
+  bindOperationsPages();
+  bindPartnerPages();
   bindSettingsNavigation();
-  bindPlanAndGuestActions();
+  bindMiscPages();
 }
 
-function setupChartControls() {
-  const chartCard = $("#mainChart")?.closest(".chart-card");
-
-  if (chartCard && !chartCard.querySelector(".granularity-control")) {
-    const toolbar =
-      chartCard.querySelector(".chart-toolbar") ||
-      chartCard.querySelector(".section-head");
-    toolbar?.insertAdjacentHTML("beforeend", granularityControl());
+function setupCharts(page) {
+  const chart = $("#mainChart");
+  if (chart) {
+    renderPriceChart(chart, {
+      item: state.item,
+      types:
+        page === "forecast"
+          ? state.priceTypes
+          : ["retail", "wholesale", "auction"],
+      band: page === "forecast" ? state.band : "auction",
+    });
   }
+  $$("[data-spark]").forEach((target) =>
+    renderSparkline(target, target.dataset.spark, "auction"),
+  );
+}
 
-  $$(".period-filter").forEach((el) => {
-    const options = periodOptions[state.granularity];
-    el.innerHTML = options
-      .map(
-        (value) =>
-          html`<option ${value === state.period ? "selected" : ""}>
-            ${value}
-          </option>`,
-      )
-      .join("");
+function bindItemSwitching(page) {
+  $$(".item-filter").forEach((select) => {
+    select.onchange = () => {
+      state.item = select.value;
+      $("#itemButton").innerHTML = `${findItem().name} <span>⌄</span>`;
+      route(page, false);
+      toast(`${findItem().name} 기준으로 화면을 갱신했습니다.`);
+    };
   });
 
-  if (
-    $("#mainChart") &&
-    !$(".forecast-panel") &&
-    !$("#mainChart").classList.contains("fake-chart")
-  )
-    $("#mainChart").insertAdjacentHTML("afterend", forecastPanel());
-
-  if ($("#mainChart")) {
-    renderChart($("#mainChart"), state.ingredient);
-    updateForecastSelection();
-  }
-
-  if ($("#guestChart")) renderChart($("#guestChart"), "cabbage", true);
+  $$(".price-card, .market-row").forEach((card) => {
+    const select = () => {
+      state.item = card.dataset.item;
+      $("#itemButton").innerHTML = `${findItem().name} <span>⌄</span>`;
+      route("forecast");
+      toast(`${findItem().name} 예측 화면으로 이동했습니다.`);
+    };
+    card.onclick = select;
+    card.onkeydown = (event) => {
+      if (event.key === "Enter") select();
+    };
+  });
 }
 
-function bindChartInteractions(page) {
-  $$(".granularity-filter").forEach(
-    (el) =>
-      (el.onchange = () => {
-        state.granularity = el.value;
-        state.period = periodOptions[state.granularity][0];
-        state.horizon = state.granularity === "monthly" ? 4 : 3;
-        route(page, false);
-        toast(`${el.options[el.selectedIndex].text} 가격 추이로 변경했습니다.`);
-      }),
-  );
-
-  $$(".ingredient-filter").forEach(
-    (el) =>
-      (el.onchange = () => {
-        state.ingredient = el.value;
-        renderChart($("#mainChart"), state.ingredient);
-        if (page === "detail") {
-          route("detail", false);
-          return;
-        }
-        if ($("#forecastMetrics"))
-          $("#forecastMetrics").innerHTML = forecastMetrics();
-        updateForecastSelection();
-      }),
-  );
-
-  $$(".period-filter").forEach(
-    (el) =>
-      (el.onchange = () => {
-        state.period = el.value;
-        renderChart($("#mainChart"), state.ingredient);
-        toast(`${el.value} 기간으로 조회했습니다.`);
-      }),
-  );
-
-  bindIngredientCards();
-}
-
-function bindIngredientCards() {
-  $$(".price-card").forEach((card) => {
-    card.onclick = () => {
-      if (!predictionIngredientIds.includes(card.dataset.ingredient)) {
-        toast(
-          `${getIngredient(card.dataset.ingredient).name}은 현재가 모니터링 품목입니다. AI 예측 검증은 배추·양파를 우선 지원합니다.`,
-        );
+function bindForecastControls(page) {
+  $$("[data-price-type]").forEach((chip) => {
+    chip.onclick = () => {
+      const key = chip.dataset.priceType;
+      const next = state.priceTypes.includes(key)
+        ? state.priceTypes.filter((type) => type !== key)
+        : [...state.priceTypes, key];
+      if (!next.length) {
+        toast("가격 유형은 하나 이상 표시해야 합니다.");
         return;
       }
-      state.ingredient = card.dataset.ingredient;
-      $$(".ingredient-filter").forEach(
-        (filter) => (filter.value = state.ingredient),
-      );
-      renderChart($("#mainChart"), state.ingredient);
-      if ($("#forecastMetrics"))
-        $("#forecastMetrics").innerHTML = forecastMetrics();
-      $("#impactIngredient").textContent = getIngredient().name;
-      $("#ingredientAnalysis")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-      toast(`${getIngredient().name} 가격 전망과 산출 근거를 표시했습니다.`);
-    };
-    card.onkeydown = (event) => {
-      if (event.key === "Enter") card.click();
+      state.priceTypes = next;
+      route(page, false);
     };
   });
-}
 
-function bindEvidenceInteractions() {
-  $$(".tab").forEach(
-    (t) =>
-      (t.onclick = () => {
-        $$(".tab").forEach((x) => x.classList.remove("active"));
-        t.classList.add("active");
-        $("#evidenceBody").innerHTML =
-          t.dataset.evidence === "weather" ? weatherTable() : productionTable();
-      }),
-  );
-
-  $$(".evidence-view-tabs button").forEach(
-    (button) =>
-      (button.onclick = () => {
-        $$(".evidence-view-tabs button").forEach((item) => {
-          item.classList.toggle("active", item === button);
-          item.setAttribute("aria-selected", String(item === button));
-        });
-        updateEvidencePanel();
-      }),
-  );
-}
-
-function bindDashboardFilters() {
-  $("#storeFilter")?.addEventListener("change", (e) =>
-    toast(`${e.target.value} 기준으로 원가 영향을 다시 계산했습니다.`),
-  );
-  $("#dateFilter")?.addEventListener("change", (e) =>
-    toast(`${e.target.value} 데이터를 불러왔습니다.`),
-  );
-  $("#downloadBrief")?.addEventListener("click", () =>
-    toast("브리핑이 내 기록에 저장되었습니다."),
-  );
-}
-
-function bindRecipePage(page) {
-  $("#recipeList")?.addEventListener("click", (event) => {
-    const button = event.target.closest(".recipe-item");
-    if (!button) return;
-    state.recipe = button.dataset.recipe;
-    state.recipeEditing = false;
-    const recipe = MOCK.recipes.find((item) => item.id === state.recipe);
-    $("#recipeList").innerHTML = recipeList(state.recipe);
-    $("#recipeDetail").innerHTML = recipeDetail(recipe, page === "menu-cost");
-    bindRecipeEditor(page);
-  });
-  $("#recipeSearch")?.addEventListener("input", (e) => {
-    $$(".recipe-item").forEach(
-      (x) =>
-        (x.style.display = x.textContent.includes(e.target.value)
-          ? "flex"
-          : "none"),
+  $(".band-filter")?.addEventListener("change", (event) => {
+    state.band = event.target.value;
+    route(page, false);
+    toast(
+      state.band
+        ? `${findPriceType(state.band).label} 90% 예측 구간을 표시합니다.`
+        : "예측 구간 표시를 숨겼습니다.",
     );
   });
-  $("#addRecipe")?.addEventListener("click", () =>
+
+  const slider = $("#horizonSlider");
+  if (slider) {
+    slider.oninput = () => {
+      state.horizon = Number(slider.value);
+      $("#horizonValue").textContent = `D+${state.horizon}`;
+      $("#forecastMetrics").innerHTML = forecastMetrics();
+      $("#forecastHoverLabel").textContent =
+        `D+${state.horizon} 예측값을 표시 중입니다.`;
+    };
+    slider.onchange = () => updateEvidencePanel();
+  }
+}
+
+function bindProposalPage() {
+  $$(".scenario-card").forEach((card) => {
+    const select = () => {
+      state.scenario = card.dataset.scenario;
+      $$(".scenario-card").forEach((item) =>
+        item.classList.toggle("active", item === card),
+      );
+      const scenario = MOCK.scenarios.find(
+        (item) => item.id === state.scenario,
+      );
+      toast(`${scenario.name}을 검토 대상으로 선택했습니다.`);
+    };
+    card.onclick = select;
+    card.onkeydown = (event) => {
+      if (event.key === "Enter") select();
+    };
+  });
+
+  $("#approveDecision")?.addEventListener("click", () => {
+    const combined = MOCK.orchestration.combined;
     openModal(
-      "새 메뉴 추가",
-      "시안에서는 저장하지 않습니다. 실제 제품에서는 메뉴명, 판매가, 제공량을 입력한 뒤 식재료와 사용량을 등록하는 흐름으로 연결됩니다.",
+      "매입 승인",
+      html`<p>
+          ${combined.qtyTon}톤 / ${money(combined.amount)} 매입안을 승인하면
+          T4에서 현금·재고·손익이 State DB에 반영됩니다.
+        </p>
+        <div class="modal-detail">
+          ${combined.splits
+            .map(
+              (split) =>
+                `${split.when} ${split.qtyTon}톤 · ${money(split.amount)} (${split.note})`,
+            )
+            .join("<br>")}
+        </div>
+        <p>프로토타입에서는 실제 데이터가 저장되지 않습니다.</p>`,
+    );
+  });
+
+  $("#reviseDecision")?.addEventListener("click", () => {
+    const loops = MOCK.orchestration.loops;
+    const remaining = loops.postMax - loops.postUsed;
+    toast(
+      remaining > 0
+        ? `재조정을 요청했습니다. 사후 루프 잔여 ${remaining - 1}회입니다.`
+        : "사후 루프가 소진되어 매입 보류로 종료됩니다.",
+    );
+  });
+
+  $("#holdDecision")?.addEventListener("click", () => {
+    $("#approvalHeadline").textContent = "매입 보류로 안전 종료했습니다.";
+    toast("오늘 매입을 보류했습니다. 다음 날 T0으로 이어집니다.");
+  });
+}
+
+function bindHistoryPage() {
+  $$(".history-row").forEach((row) => {
+    const open = () => {
+      const record = MOCK.proposalHistory[Number(row.dataset.history)];
+      openModal(
+        `${record.date} 제안 결과`,
+        html`<span
+            class="status-badge status-${record.critic === "PASS"
+              ? "success"
+              : "danger"}"
+            >Critic ${record.critic}</span
+          >
+          <p>초안 ${record.proposed} → 결과 ${record.approved}</p>
+          <div class="modal-detail">
+            사전 feedback 루프 ${record.pre}회 · 사후 재조정 루프
+            ${record.post}회<br />
+            채택된 변경안: ${record.adopted}<br />
+            최종 결정: ${record.decision}
+          </div>`,
+      );
+    };
+    row.onclick = open;
+    row.onkeydown = (event) => {
+      if (event.key === "Enter") open();
+    };
+  });
+
+  $("#exportHistory")?.addEventListener("click", () =>
+    toast("제안 이력을 XLSX로 내보냈습니다. (프로토타입)"),
+  );
+}
+
+function bindMarketPage() {
+  $("#marketSort")?.addEventListener("change", (event) => {
+    const rows = [...MOCK.items].sort((a, b) =>
+      event.target.value === "change" ? b.change - a.change : 0,
+    );
+    $("#marketRows").innerHTML = rows.map(marketRow).join("");
+    $$("[data-spark]").forEach((target) =>
+      renderSparkline(target, target.dataset.spark, "auction"),
+    );
+    bindItemSwitching(state.page);
+    toast(
+      event.target.value === "change"
+        ? "변동률이 큰 순서로 정렬했습니다."
+        : "품목 순서로 정렬했습니다.",
+    );
+  });
+
+  $("#exportPurchases")?.addEventListener("click", () =>
+    toast("매입 내역을 XLSX로 내보냈습니다. (프로토타입)"),
+  );
+
+  $("#saveConfig")?.addEventListener("click", () => {
+    const values = {};
+    $$(".config-row input:not([readonly])").forEach((input) => {
+      values[input.name] = input.value;
+    });
+    localStorage.setItem("agriSim.purchaseConfig", JSON.stringify(values));
+    toast("매입 상수값을 이 브라우저에 저장했습니다.");
+  });
+}
+
+function bindOperationsPages() {
+  $("#addLabor")?.addEventListener("click", () =>
+    openModal(
+      "근무 등록",
+      "시안에서는 저장하지 않습니다. 실제 제품에서는 근무 조, 투입 인원, 작업 내용을 입력해 일일 근로자 명부에 추가합니다.",
       true,
     ),
   );
 
-  bindRecipeEditor(page);
-}
-
-function bindStoreRows() {
-  $$(".store-row").forEach(
-    (row) =>
-      (row.onclick = () => {
-        state.store = row.dataset.store;
-        const s = MOCK.stores.find((x) => x.name === state.store);
-        openModal(
-          `${s.name} 원가 현황`,
-          `${s.region} · 담당자 ${s.manager}<br><br>현재 위험 품목은 <strong>${s.risks}</strong>입니다. 배추 관련 등록 메뉴 4개의 예상 원가가 평균 7.2% 상승할 것으로 보입니다.`,
-        );
-      }),
-  );
-}
-
-function bindStorePage() {
-  bindStoreRows();
-
-  $("#regionFilter")?.addEventListener("change", (e) => {
-    $("#storeRows").innerHTML = MOCK.stores
-      .filter(
-        (s) =>
-          e.target.value === "전체 지역" || s.region.startsWith(e.target.value),
-      )
-      .map(storeRow)
-      .join("");
-    bindStoreRows();
+  $("#deliveryFilter")?.addEventListener("change", (event) => {
+    $$(".delivery-row").forEach((row) => {
+      row.hidden =
+        event.target.value !== "all" &&
+        row.dataset.state !== event.target.value;
+    });
   });
 
-  $("#addStore")?.addEventListener("click", openAddStoreModal);
-}
-
-function bindBriefingPage() {
-  $$(".brief-card").forEach(
-    (b, i) =>
-      (b.onclick = () => {
-        const item = MOCK.briefings[i] || MOCK.briefings[0];
-        openModal(
-          item.title,
-          html`<span class="status-badge status-warning">${item.type}</span>
-            <p>${item.body}</p>
-            <div class="modal-detail">
-              예상 영향: 배추 사용 메뉴 평균 원가 +7.4%<br />권장 대응: 2~3주
-              물량 발주 시점 검토
-            </div>`,
-        );
-      }),
-  );
-  $("#generateBriefing")?.addEventListener("click", () =>
-    toast("주간 브리핑 생성을 시작했습니다. 완료되면 기록에 추가됩니다."),
-  );
-}
-
-function bindAlertPage() {
-  $("#markRead")?.addEventListener("click", () => {
-    $$(".alert-item").forEach((item) => item.classList.remove("unread"));
-    toast("모든 알림을 읽음 처리했습니다.");
-  });
-  $$("[data-alert-filter]").forEach(
-    (button) =>
-      (button.onclick = () => {
-        $$("[data-alert-filter]").forEach((item) =>
-          item.classList.toggle("active", item === button),
-        );
-        $$(".alert-item").forEach(
-          (item) =>
-            (item.hidden =
-              button.dataset.alertFilter !== "all" &&
-              item.dataset.alertType !== button.dataset.alertFilter),
-        );
-      }),
-  );
-  $$(".alert-item").forEach(
-    (item) =>
-      (item.onclick = (event) => {
-        if (event.target.closest("[data-page]")) return;
-        const alert = alertItems[Number(item.dataset.alertIndex)];
-        item.classList.remove("unread");
-        openModal(
-          alert.title,
-          html`<span class="status-badge status-${alert.level}"
-              >${alert.time}</span
-            >
-            <p>${alert.summary}</p>
-            <div class="modal-detail">
-              이 알림은 임계치를 넘은 시점에 즉시 생성되는 대응 이벤트입니다.
-            </div>`,
-        );
-      }),
-  );
-}
-
-function bindSettingsNavigation() {
-  $$(".settings-menu button").forEach((button) => {
-    button.onclick = () => {
-      const index = Number(button.dataset.setting);
-      if (index === 4) {
-        location.href = "login.html";
-        return;
-      }
-      const settingRoutes = ["profile", "company", "settings", "plans"];
-      route(settingRoutes[index]);
+  $$(".delivery-row").forEach((row) => {
+    const open = () => {
+      const delivery = MOCK.sales.deliveries.find(
+        (item) => item.code === row.dataset.code,
+      );
+      openModal(
+        `${delivery.code} 배송 상세`,
+        html`<p>${delivery.partner} · ${delivery.qty}</p>
+          <div class="modal-detail">
+            배차 ${delivery.truck}<br />도착 예정 ${delivery.eta}<br />상태
+            ${delivery.state}
+          </div>`,
+      );
+    };
+    row.onclick = open;
+    row.onkeydown = (event) => {
+      if (event.key === "Enter") open();
     };
   });
-  bindSettingsPanel();
-  $("[data-open-franchise-settings]")?.addEventListener("click", () => {
-    state.settingsTab = 1;
-    route("company");
-  });
-}
 
-function bindPlanAndGuestActions() {
-  $$("[data-plan]").forEach(
-    (b) =>
-      (b.onclick = () =>
-        openModal(
-          `${b.dataset.plan} 플랜`,
-          `선택하신 플랜은 시안용입니다. 실제 결제는 진행되지 않습니다.`,
-        )),
-  );
-  $("#freeStart")?.addEventListener(
-    "click",
-    () => (location.href = "signup.html"),
-  );
-  $("#loginPreview")?.addEventListener(
-    "click",
-    () => (location.href = "login.html"),
+  $("#exportOutbound")?.addEventListener("click", () =>
+    toast("출고 전표를 내보냈습니다. (프로토타입)"),
   );
 }
 
-function bindRecipeEditor(page) {
-  const recipe =
-    MOCK.recipes.find((item) => item.id === state.recipe) || MOCK.recipes[0];
-  $("#editRecipe")?.addEventListener("click", () => {
-    state.recipeEditing = true;
-    $("#recipeDetail").innerHTML = recipeEditForm(recipe);
-    bindRecipeEditor(page);
+function bindPartnerPages() {
+  $("#ledgerFilter")?.addEventListener("change", (event) => {
+    $$(".ledger-row").forEach((row) => {
+      row.hidden =
+        event.target.value !== "all" && row.dataset.type !== event.target.value;
+    });
   });
-  $("#cancelRecipeEdit")?.addEventListener("click", () => {
-    state.recipeEditing = false;
-    $("#recipeDetail").innerHTML = recipeDetail(recipe, false);
-    bindRecipeEditor(page);
+
+  $$("[data-receipt]").forEach((button) => {
+    button.onclick = () => {
+      const receipt = MOCK.partners.receipts[Number(button.dataset.receipt)];
+      const format = button.dataset.format;
+      const label = { mail: "메일 발송", pdf: "PDF 추출", xlsx: "XLSX 추출" }[
+        format
+      ];
+      toast(`${receipt.partner} ${receipt.no} ${label}을 시작했습니다.`);
+    };
   });
-  $("#addIngredientRow")?.addEventListener("click", () => {
-    $("#ingredientEditRows").insertAdjacentHTML(
-      "beforeend",
-      ingredientInputRow(),
+
+  $("#sendAllReceipts")?.addEventListener("click", () => {
+    const pending = MOCK.partners.receipts.filter(
+      (receipt) => receipt.state === "발송 대기",
     );
-    $("#ingredientEditRows tr:last-child input").focus();
+    toast(`발송 대기 ${pending.length}건을 메일로 보냈습니다. (프로토타입)`);
   });
-  $("#ingredientEditRows")?.addEventListener("click", (event) => {
-    const button = event.target.closest(".ingredient-remove");
-    if (!button) return;
-    const rows = $$("#ingredientEditRows tr");
-    if (rows.length === 1) {
-      toast("식재료는 한 개 이상 등록해 주세요.");
-      return;
-    }
-    button.closest("tr").remove();
-  });
-  $("#recipeEditForm")?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const rows = $$("#ingredientEditRows tr");
-    recipe.items = rows.map((row) => [
-      row.querySelector('[name="ingredientName"]').value.trim(),
-      row.querySelector('[name="ingredientAmount"]').value.trim(),
-      row.querySelector('[name="ingredientPrice"]').value.trim(),
-    ]);
-    recipe.updatedAt = new Date()
-      .toISOString()
-      .slice(0, 10)
-      .replaceAll("-", ".");
-    localStorage.setItem("costCatcher.recipes", JSON.stringify(MOCK.recipes));
-    state.recipeEditing = false;
-    $("#recipeDetail").innerHTML = recipeDetail(recipe, false);
-    bindRecipeEditor(page);
-    toast(`${recipe.name} 레시피를 저장했습니다.`);
-  });
+}
+
+function bindMiscPages() {
+  $("#externalJoin")?.addEventListener("click", () =>
+    openModal(
+      "오픈 채팅방",
+      "외부 사용자가 참여해 실시간으로 물량을 문의하고 입찰하는 공간입니다. 유입량에 따라 판매량을 유동적으로 조절합니다.",
+    ),
+  );
 }

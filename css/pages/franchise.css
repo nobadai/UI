@@ -1,6 +1,0 @@
-@import url("stores.css");
-
-/* Franchise overview */
-#appMain .mascot-briefing + .page-intro {
-  margin-top: 4px;
-}

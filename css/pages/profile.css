@@ -1,6 +1,0 @@
-@import url("settings.css");
-
-/* 회원 정보 화면은 설정 디자인 시스템을 그대로 사용합니다. */
-#appMain .settings-panel {
-  min-height: 420px;
-}

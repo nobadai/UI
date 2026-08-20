@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="식자재 원가 조기경보 서비스 원가 캣쳐 HTML 프로토타입"
+      content="가상 농산물 유통회사 AI 에이전트 시뮬레이션 관리자 HTML 프로토타입"
     />
-    <title>원가 캣쳐 | Cost Catcher</title>
+    <title>농산 캣쳐 | AGRI CATCHER</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -21,7 +21,7 @@
     <link
       rel="stylesheet"
       id="pageStyle"
-      href="css/pages/app-pages.css?v=20260814-5"
+      href="css/pages/app-pages.css?v=20260820-1"
     />
   </head>
   <body>
@@ -29,10 +29,10 @@
       <div
         class="loading-mascot"
         role="img"
-        aria-label="데이터를 확인하는 원가 캣쳐 마스코트"
+        aria-label="오늘의 상태를 확인하는 마스코트"
       ></div>
-      <strong>시장 신호를 분석하고 있어요</strong>
-      <span>가격과 원가 데이터를 불러오는 중입니다.</span>
+      <strong>오늘의 상태 스냅샷을 모으고 있어요</strong>
+      <span>가용자금 · 재고 · 확정주문 · 예측을 불러오는 중입니다.</span>
       <div class="loading-dots" aria-hidden="true"><i></i><i></i><i></i></div>
     </div>
     <div class="app-shell">
@@ -41,7 +41,7 @@
           <button
             class="brand-home"
             data-page="dashboard"
-            aria-label="원가 캣쳐 메인으로 이동"
+            aria-label="메인 대시보드로 이동"
           >
             <svg class="brand-mark" viewBox="0 0 44 48" aria-hidden="true">
               <path d="M22 2 40 9v25L22 46 4 34V9Z" fill="currentColor" />
@@ -59,7 +59,10 @@
                 stroke-linecap="round"
               />
             </svg>
-            <span><strong>원가 캣쳐</strong><small>COST CATCHER</small></span>
+            <span
+              ><strong data-brand-name>농산 캣쳐</strong
+              ><small data-brand-eng>AGRI CATCHER</small></span
+            >
           </button>
           <button
             class="icon-btn sidebar-close"
@@ -74,14 +77,12 @@
           <div
             class="sidebar-mascot mascot-binoculars"
             role="img"
-            aria-label="위험 신호를 발견한 원가 캣쳐 마스코트"
+            aria-label="오늘의 제안을 살피는 마스코트"
           ></div>
           <div>
-            <span class="eyebrow">AI EARLY SIGNAL</span>
-            <strong>오늘 2개 위험 신호를<br />먼저 포착했어요.</strong>
-            <button type="button" data-page="ingredient">
-              분석 바로 보기 →
-            </button>
+            <span class="eyebrow">TODAY PIPELINE</span>
+            <strong>T3 조정 완료.<br />승인만 남았어요.</strong>
+            <button type="button" data-page="proposal">제안 상세 보기 →</button>
           </div>
         </div>
       </aside>
@@ -96,17 +97,17 @@
             ☰
           </button>
           <div class="page-heading">
-            <span id="breadcrumb">원가 캣쳐 / 대시보드</span>
+            <span id="breadcrumb">농산 캣쳐 / 대시보드</span>
             <h1 id="pageTitle">대시보드</h1>
             <p id="pageSubtitle">
-              오늘의 식자재 동향과 원가 위험 신호를 확인하세요.
+              오늘의 상태 스냅샷과 일일 파이프라인 진행 상황을 확인하세요.
             </p>
           </div>
           <div class="header-actions">
             <button
               class="icon-btn notification-button"
               id="notificationButton"
-              aria-label="알림 보기"
+              aria-label="이상치 알림 보기"
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path
@@ -123,21 +124,19 @@
               ><span>도움말</span>
             </button>
             <div class="dropdown-wrap">
-              <button class="select-button" id="companyButton">
-                (주)캣쳐푸드 <span>⌄</span>
+              <button
+                class="select-button"
+                id="itemButton"
+                aria-label="기준 품목 선택"
+              >
+                배추 <span>⌄</span>
               </button>
-              <div class="dropdown" id="companyDropdown">
-                <button data-company="(주)캣쳐푸드">
-                  (주)캣쳐푸드 <small>본사</small>
-                </button>
-                <button data-company="캣쳐키친">
-                  캣쳐키친 <small>브랜드</small>
-                </button>
-              </div>
+              <div class="dropdown" id="itemDropdown"></div>
             </div>
-            <button class="profile" data-page="profile">
-              <span class="avatar">원</span
-              ><span><strong>원가캣쳐 님</strong><small>관리자</small></span
+            <button class="profile" data-page="members">
+              <span class="avatar">현</span
+              ><span
+                ><strong>이현서 님</strong><small>최상위 관리자</small></span
               ><b>⌄</b>
             </button>
           </div>
@@ -157,20 +156,27 @@
         </svg>
         <span>홈</span>
       </button>
-      <button type="button" data-page="ingredient" aria-label="식자재 분석">
+      <button type="button" data-page="forecast" aria-label="가격 예측">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M4 19V5M4 19h16M7 15l4-5 3 2 5-6" />
         </svg>
-        <span>식자재</span>
+        <span>예측</span>
       </button>
-      <button type="button" data-page="stores" aria-label="매장 관리">
+      <button type="button" data-page="proposal" aria-label="금일 제안 상세">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M3 9h18l-2-5H5L3 9Z" />
-          <path d="M5 9v11h14V9M9 20v-6h6v6" />
+          <rect x="4" y="7" width="16" height="12" rx="3" />
+          <path d="M12 3v4M9 12h.01M15 12h.01M9.5 16h5" />
         </svg>
-        <span>매장</span>
+        <span>매입</span>
       </button>
-      <button type="button" data-page="settings" aria-label="설정">
+      <button type="button" data-page="inventory-status" aria-label="재고 현황">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3 3.5 7.2v9.6L12 21l8.5-4.2V7.2Z" />
+          <path d="M3.5 7.2 12 11.4l8.5-4.2M12 11.4V21" />
+        </svg>
+        <span>재고</span>
+      </button>
+      <button type="button" data-page="company" aria-label="설정">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="3" />
           <path
@@ -182,33 +188,33 @@
     </nav>
 
     <button class="chat-launcher" id="chatLauncher">
-      <span>AI</span> 원가 캣쳐 챗봇
+      <span>AI</span> 유통 시뮬레이션 챗봇
     </button>
     <aside
       class="chat-panel"
       id="chatPanel"
-      aria-label="원가 캣쳐 AI 챗봇"
+      aria-label="유통 시뮬레이션 AI 챗봇"
       aria-hidden="true"
     >
       <header>
         <div>
-          <span class="chat-logo">AI</span><strong>원가 캣쳐 AI 챗봇</strong>
+          <span class="chat-logo">AI</span><strong>유통 시뮬레이션 챗봇</strong>
         </div>
         <button id="chatMinimize" aria-label="챗봇 닫기">×</button>
       </header>
       <div class="chat-context">
         <span class="live-dot"></span
-        ><span id="chatContext">배추 시장 데이터를 기준으로 답변합니다</span>
+        ><span id="chatContext">오늘 데이터를 기준으로 답변합니다</span>
       </div>
       <div class="chat-hero">
         <div
           class="mascot-crop mascot-magnifier"
           role="img"
-          aria-label="돋보기로 가격 신호를 찾는 원가 캣쳐 마스코트"
+          aria-label="데이터를 살펴보는 마스코트"
         ></div>
         <div>
-          <strong>데이터를 보면, 위험이 보여요!</strong
-          ><span>가격 전망과 원가 영향을 물어보세요.</span>
+          <strong>근거를 보면, 판단이 보여요!</strong
+          ><span>매입 제안과 부서 제약을 물어보세요.</span>
         </div>
       </div>
       <div class="chat-messages" id="chatMessages"></div>
@@ -240,11 +246,10 @@
     <script src="js/core/router.js"></script>
 
     <script src="js/pages/dashboard.js"></script>
-    <script src="js/pages/detail.js"></script>
-    <script src="js/pages/recipes.js"></script>
-    <script src="js/pages/stores.js"></script>
-    <script src="js/pages/briefings.js"></script>
-    <script src="js/pages/alerts.js"></script>
+    <script src="js/pages/forecast.js"></script>
+    <script src="js/pages/purchase.js"></script>
+    <script src="js/pages/finance.js"></script>
+    <script src="js/pages/operations.js"></script>
     <script src="js/pages/settings.js"></script>
     <script src="js/pages/misc.js"></script>
 
