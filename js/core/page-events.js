@@ -13,7 +13,6 @@ function bindPage(page) {
   bindOperationsPages();
   bindPartnerPages();
   bindSettingsNavigation();
-  bindMiscPages();
 }
 
 function setupCharts(page) {
@@ -26,6 +25,7 @@ function setupCharts(page) {
           ? state.priceTypes
           : ["retail", "wholesale", "auction"],
       band: page === "forecast" ? state.band : "auction",
+      pin: page === "forecast",
     });
   }
   $$("[data-spark]").forEach((target) =>
@@ -85,13 +85,8 @@ function bindForecastControls(page) {
 
   const slider = $("#horizonSlider");
   if (slider) {
-    slider.oninput = () => {
-      state.horizon = Number(slider.value);
-      $("#horizonValue").textContent = `D+${state.horizon}`;
-      $("#forecastMetrics").innerHTML = forecastMetrics();
-      $("#forecastHoverLabel").textContent =
-        `D+${state.horizon} 예측값을 표시 중입니다.`;
-    };
+    // 슬라이더와 그래프 클릭이 같은 고정 표식을 움직입니다.
+    slider.oninput = () => pinHorizon(Number(slider.value), false);
     slider.onchange = () => updateEvidencePanel();
   }
 }
@@ -157,9 +152,9 @@ function bindHistoryPage() {
       openModal(
         `${record.date} 제안 결과`,
         html`<span
-            class="status-badge status-${record.critic === "PASS"
-              ? "success"
-              : "danger"}"
+            class="status-badge status-${
+              record.critic === "PASS" ? "success" : "danger"
+            }"
             >Critic ${record.critic}</span
           >
           <p>초안 ${record.proposed} → 결과 ${record.approved}</p>
@@ -280,13 +275,4 @@ function bindPartnerPages() {
     );
     toast(`발송 대기 ${pending.length}건을 메일로 보냈습니다. (프로토타입)`);
   });
-}
-
-function bindMiscPages() {
-  $("#externalJoin")?.addEventListener("click", () =>
-    openModal(
-      "오픈 채팅방",
-      "외부 사용자가 참여해 실시간으로 물량을 문의하고 입찰하는 공간입니다. 유입량에 따라 판매량을 유동적으로 조절합니다.",
-    ),
-  );
 }

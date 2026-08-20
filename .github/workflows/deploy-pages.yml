@@ -1,4 +1,4 @@
-name: Deploy Agri Catcher Prototype
+name: Deploy Haetdeul Agri Prototype
 
 on:
   push:

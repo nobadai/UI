@@ -235,9 +235,9 @@ function inventoryStatusPage() {
                 <td>${row.inbound}</td>
                 <td>
                   <span
-                    class="storage-chip storage-${row.storage === "냉장"
-                      ? "cold"
-                      : "room"}"
+                    class="storage-chip storage-${
+                      row.storage === "냉장" ? "cold" : "room"
+                    }"
                     >${row.storage}</span
                   >
                 </td>
@@ -294,9 +294,9 @@ function inventoryOutboundPage() {
                 <td><code class="ref-id">${row.doc}</code></td>
                 <td>
                   <span
-                    class="status-badge status-${row.state === "출고 완료"
-                      ? "success"
-                      : "warning"}"
+                    class="status-badge status-${
+                      row.state === "출고 완료" ? "success" : "warning"
+                    }"
                     >${row.state}</span
                   >
                 </td>
@@ -351,9 +351,9 @@ function partnerLedgerPage() {
                 <td><strong>${row.partner}</strong></td>
                 <td>
                   <span
-                    class="status-badge status-${row.type === "매출"
-                      ? "success"
-                      : "warning"}"
+                    class="status-badge status-${
+                      row.type === "매출" ? "success" : "warning"
+                    }"
                     >${row.type}</span
                   >
                 </td>
@@ -396,9 +396,9 @@ function partnerReceiptPage() {
                 <td>${money(row.amount)}</td>
                 <td>
                   <span
-                    class="status-badge status-${row.state === "발송 대기"
-                      ? "warning"
-                      : "success"}"
+                    class="status-badge status-${
+                      row.state === "발송 대기" ? "warning" : "success"
+                    }"
                     >${row.state}</span
                   >
                 </td>

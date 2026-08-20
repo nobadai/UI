@@ -101,6 +101,17 @@ const ITEM_BASE = [
     coverage: false,
   },
   {
+    id: "potato",
+    name: "감자",
+    unit: "원/kg",
+    base: 1480,
+    drift: 0.03,
+    volatility: 0.028,
+    status: "success",
+    label: "안정",
+    coverage: false,
+  },
+  {
     id: "garlic",
     name: "마늘",
     unit: "원/kg",
@@ -1135,14 +1146,151 @@ window.AgriSimData = {
   ],
 
   company: {
-    name: "(가칭) 농산 캣쳐",
+    name: "햇들 농산",
     businessNumber: "000-00-00000",
     representative: "미정",
     phone: "02-0000-0000",
     address: "서울특별시 송파구 가락동 도매시장로 000",
     email: "contact@agri-sim.co.kr",
     intro:
-      "가상 농산물 유통회사 시뮬레이션입니다. 회사명은 정의서 §10.3 기준 미확정 상태입니다.",
+      "산지에서 매입한 농산물을 급식소와 마트, 가공공장에 공급하는 농산물 유통회사입니다. 시뮬레이션 기반 가상회사입니다.",
+    founded: "2026",
+    employees: "정규 4명 · 일용 평균 6명",
+  },
+
+  /* ------------------------------------------------------- 외부 기업 홈페이지 */
+  /* 관리자 `설정 > 외부 페이지 관리`에서 수정하면 localStorage 값이 우선합니다. */
+  publicSite: {
+    heroEyebrow: "DATA-DRIVEN AGRICULTURAL DISTRIBUTION",
+    heroTitle: "농산물 유통,\n경험에서 데이터 기반 의사결정으로.",
+    heroBody:
+      "시장 가격과 수요, 재고와 자금을 함께 보고 더 안정적인 유통 의사결정을 만듭니다.",
+    heroPrimary: "거래 시작하기",
+    heroSecondary: "사업 알아보기",
+    heroImageCaption: "산지 · 도매시장 · 물류창고를 잇는 유통 현장",
+
+    aboutTitle: "산지와 식탁 사이를 책임지는 유통 파트너",
+    aboutBody:
+      "계약 산지에서 매입한 농산물을 자체 창고에서 보관하고, 급식소와 마트, 가공공장까지 매일 배송합니다. 매입 수량과 시점은 감이 아니라 시장 데이터와 자금 여력을 함께 계산해 결정합니다.",
+
+    capabilities: [
+      {
+        key: "price",
+        title: "가격 예측",
+        body: "시장 가격 흐름을 분석해 매입 시점을 잡습니다.",
+      },
+      {
+        key: "inventory",
+        title: "재고 관리",
+        body: "재고량과 보관 조건을 함께 판단해 손실을 줄입니다.",
+      },
+      {
+        key: "demand",
+        title: "수요 대응",
+        body: "확정 수요와 판매 가능성을 반영해 물량을 맞춥니다.",
+      },
+      {
+        key: "cash",
+        title: "자금 안정성",
+        body: "현재 자금으로 실행 가능한 거래인지 먼저 검토합니다.",
+      },
+    ],
+
+    process: [
+      {
+        step: "01",
+        title: "산지",
+        body: "계약 농가·산지조합에서 당일 물량을 확보합니다.",
+      },
+      {
+        step: "02",
+        title: "매입",
+        body: "시장 시세와 확정 수요를 대조해 매입 수량을 정합니다.",
+      },
+      {
+        step: "03",
+        title: "입고 · 보관",
+        body: "상온·냉장 구분 보관으로 신선도와 감모율을 관리합니다.",
+      },
+      {
+        step: "04",
+        title: "거래처 납품",
+        body: "급식소·마트·식당·가공공장으로 매일 배송합니다.",
+      },
+      {
+        step: "05",
+        title: "정산",
+        body: "거래 내역과 영수증을 정해진 주기로 정산합니다.",
+      },
+    ],
+
+    partnerTypes: [
+      {
+        name: "급식소",
+        body: "주간 식단에 맞춘 정기 납품과 발주일 예측",
+        volume: "월 24톤",
+      },
+      {
+        name: "대형마트",
+        body: "규격·선별 기준에 맞춘 상시 공급",
+        volume: "월 18톤",
+      },
+      {
+        name: "대형식당",
+        body: "선입금 조건의 안정적인 소량 정기 납품",
+        volume: "월 9.6톤",
+      },
+      {
+        name: "김치 가공공장",
+        body: "대량 원물 공급과 주 단위 정산",
+        volume: "월 48톤",
+      },
+      {
+        name: "1차 소매업체",
+        body: "오픈 채팅방을 통한 당일 잔여 물량 거래",
+        volume: "월 6.4톤",
+      },
+      {
+        name: "산지 생산자",
+        body: "연간 계약 재배와 사전 물량 확약",
+        volume: "월 116톤 매입",
+      },
+    ],
+
+    scale: [
+      { label: "취급 품목", value: "6개", sub: "엽채 · 근채 · 조미채소" },
+      { label: "월 취급 물량", value: "116톤", sub: "매입 기준" },
+      { label: "정기 거래처", value: "5곳", sub: "급식 · 유통 · 가공" },
+      { label: "보관 용량", value: "60톤", sub: "상온 · 냉장 구분 보관" },
+    ],
+
+    infra: [
+      {
+        title: "보관",
+        body: "총 60톤 규모 창고를 상온과 냉장으로 나눠 운영합니다.",
+      },
+      {
+        title: "운송",
+        body: "5톤 · 2.5톤 · 1톤 차량으로 물량에 맞춰 배차합니다.",
+      },
+      {
+        title: "품질",
+        body: "입고일과 잔여 유통기한, 감모율을 품목별로 기록합니다.",
+      },
+    ],
+
+    contact: {
+      sales: "거래처 등록 문의",
+      farm: "산지 파트너 등록 문의",
+      hours: "평일 06:00 ~ 18:00",
+    },
+
+    ctaTitle: "함께 거래할 파트너를 찾습니다.",
+    ctaBody:
+      "안정적인 공급처를 찾고 계신가요? 새로운 판로가 필요한 산지 생산자이신가요?",
+
+    disclosureNote:
+      "이 프로젝트는 시뮬레이션 기반 가상회사입니다. 아래 수치는 실제 실적이 아닙니다.",
   },
 
   anomalyRules: [
@@ -1187,6 +1335,211 @@ window.AgriSimData = {
       threshold: "5% 초과",
       channel: "대시보드",
       on: false,
+    },
+  ],
+
+  /* ------------------------------------------------------------- 알림 로그 */
+  /*
+   * anomalyRules가 "언제 알릴지"를 정의한다면, 여기는 "실제로 알린 기록"입니다.
+   * 헤더 알림 버튼의 요약 목록과 관리 > 알림 로그 상세가 같은 배열을 공유합니다.
+   */
+  notifications: [
+    {
+      id: "NTF-20260820-07",
+      rule: "price_jump",
+      level: "critical",
+      title: "배추 경락가 급등",
+      summary: "전일 대비 +9.4%로 임계치를 넘었습니다.",
+      detectedAt: "2026-08-20 06:12",
+      relativeTime: "1시간 전",
+      observed: "+9.4% (1,180원/kg)",
+      threshold: "전일 대비 ±8%",
+      channel: "이메일 · 대시보드",
+      status: "unread",
+      refId: "kamis_auction_20260820",
+      target: { page: "market", label: "시장 시세에서 확인" },
+      detail:
+        "가락시장 8월 20일 배추 경락가는 1,180원/kg으로 전일 1,079원 대비 9.4% 상승했습니다. 주산지 누적 강수와 도매시장 반입량 감소가 같은 방향으로 확인됩니다.",
+      impact: [
+        "D+18 예측 경락가가 상향 조정되었습니다.",
+        "시나리오 A의 한도 초과 사유가 이 급등에서 발생했습니다.",
+        "매입 단가 상한 재계산이 필요합니다.",
+      ],
+      timeline: [
+        {
+          time: "06:12",
+          label: "탐지",
+          note: "T0 상태 스냅샷 수집 중 임계 초과",
+        },
+        {
+          time: "06:12",
+          label: "알림 발송",
+          note: "이메일 · 대시보드 동시 발송",
+        },
+        { time: "06:30", label: "확인 대기", note: "담당자 확인 전" },
+      ],
+    },
+    {
+      id: "NTF-20260820-06",
+      rule: "cash_floor",
+      level: "critical",
+      title: "가용자금 하한 근접",
+      summary: "가용자금 2,840만원으로 하한 3,000만원 아래입니다.",
+      detectedAt: "2026-08-20 06:10",
+      relativeTime: "1시간 전",
+      observed: "28,400,000원",
+      threshold: "30,000,000원 미만",
+      channel: "이메일",
+      status: "unread",
+      refId: "state_cash_20260820",
+      target: { page: "finance-available", label: "가용 자산에서 확인" },
+      detail:
+        "유보 항목(예정 급여 1,200만원, 고정지출 640만원)을 차감한 실제 집행 가능 잔액이 2,840만원입니다. 재무 에이전트는 이 값을 매입 금액 상한의 기준으로 사용합니다.",
+      impact: [
+        "재무 에이전트가 시나리오 A에 hard 제약을 반환했습니다.",
+        "금일 매입 금액은 2,000만원 이하로 제한됩니다.",
+      ],
+      timeline: [
+        { time: "06:10", label: "탐지", note: "가용자금 계산 직후 규칙 평가" },
+        { time: "06:10", label: "알림 발송", note: "이메일 발송" },
+        { time: "06:25", label: "제약 반영", note: "T2 재무 회신에 반영됨" },
+      ],
+    },
+    {
+      id: "NTF-20260820-05",
+      rule: "warehouse_cap",
+      level: "warning",
+      title: "3호 저온창고 적재율 초과",
+      summary: "적재율 88.2%로 임계치 85%를 넘었습니다.",
+      detectedAt: "2026-08-20 05:58",
+      relativeTime: "2시간 전",
+      observed: "88.2%",
+      threshold: "85% 초과",
+      channel: "대시보드",
+      status: "unread",
+      refId: "wms_capacity_20260820",
+      target: { page: "inventory-status", label: "재고 현황에서 확인" },
+      detail:
+        "3호 저온창고 가용 용량이 11.8%만 남았습니다. 물류 에이전트는 이 값을 근거로 입고 타이밍 분할을 제안했습니다.",
+      impact: [
+        "물류 에이전트가 입고 타이밍 축으로 변경안을 제출했습니다.",
+        "D+0 9톤 / D+1 3톤 분할 입고가 제안되었습니다.",
+      ],
+      timeline: [
+        {
+          time: "05:58",
+          label: "탐지",
+          note: "야간 입고 반영 후 적재율 재계산",
+        },
+        { time: "05:58", label: "알림 발송", note: "대시보드 표시" },
+        {
+          time: "06:22",
+          label: "변경안 생성",
+          note: "물류 suggested_adjustment 생성",
+        },
+      ],
+    },
+    {
+      id: "NTF-20260819-04",
+      rule: "critic_fail",
+      level: "warning",
+      title: "Critic 검사3 FAIL",
+      summary: "숫자 주장에 ref_id가 없어 반려되었습니다.",
+      detectedAt: "2026-08-19 07:04",
+      relativeTime: "어제",
+      observed: "검사3 FAIL · 1건",
+      threshold: "즉시",
+      channel: "이메일 · 대시보드",
+      status: "read",
+      refId: "critic_log_20260819",
+      target: { page: "proposal-history", label: "제안 이력에서 확인" },
+      detail:
+        "영업 에이전트 회신의 '판매단가 8% 인상 여력' 주장에 ref_id가 없어 Critic 검사3이 FAIL 처리했습니다. 사후 루프 1회를 사용해 근거를 보강한 뒤 PASS했습니다.",
+      impact: [
+        "사후 루프 1/2 사용",
+        "재제출 후 PASS, 매입은 정상 진행되었습니다.",
+      ],
+      timeline: [
+        { time: "07:04", label: "FAIL", note: "Critic 검사3 위반 감지" },
+        {
+          time: "07:06",
+          label: "재요청",
+          note: "영업 에이전트에 근거 보강 요청",
+        },
+        { time: "07:11", label: "PASS", note: "ref_id 보강 후 통과" },
+      ],
+    },
+    {
+      id: "NTF-20260818-03",
+      rule: "loop_exhausted",
+      level: "warning",
+      title: "사전 루프 소진 · 매입 보류",
+      summary: "사전 2회를 모두 사용해 당일 매입이 보류되었습니다.",
+      detectedAt: "2026-08-18 07:41",
+      relativeTime: "8월 18일",
+      observed: "사전 2/2 소진",
+      threshold: "사전 2회 + 사후 2회 소진",
+      channel: "이메일",
+      status: "read",
+      refId: "orchestrator_log_20260818",
+      target: { page: "proposal-history", label: "제안 이력에서 확인" },
+      detail:
+        "물류 hard 제약과 재무 hard 제약이 동시에 충돌해 두 번의 사전 루프로도 합의안을 만들지 못했습니다. 정의서 §4.3에 따라 당일 매입을 보류했습니다.",
+      impact: [
+        "8월 18일 매입 0톤 처리",
+        "익일 재고 부족으로 급식소 납품 일정 조정",
+      ],
+      timeline: [
+        { time: "07:12", label: "루프 1", note: "물류 · 재무 제약 충돌" },
+        { time: "07:33", label: "루프 2", note: "조정 실패" },
+        { time: "07:41", label: "보류 확정", note: "당일 매입 보류 처리" },
+      ],
+    },
+    {
+      id: "NTF-20260817-02",
+      rule: "loss_rate",
+      level: "info",
+      title: "대파 감모율 상승",
+      summary: "감모율 5.4%로 참고 임계치를 넘었습니다.",
+      detectedAt: "2026-08-17 18:20",
+      relativeTime: "8월 17일",
+      observed: "5.4%",
+      threshold: "5% 초과",
+      channel: "대시보드",
+      status: "done",
+      refId: "wms_loss_20260817",
+      target: { page: "inventory-status", label: "재고 현황에서 확인" },
+      detail:
+        "대파 보관 12일차 감모율이 5.4%로 집계됐습니다. 현재 이 규칙은 알림 설정에서 꺼져 있어 이력으로만 기록됩니다.",
+      impact: ["보관 온도 재설정 후 감모율 4.1%로 회복되었습니다."],
+      timeline: [
+        { time: "18:20", label: "탐지", note: "일일 재고 마감 집계" },
+        { time: "19:05", label: "조치", note: "3호 창고 보관 온도 조정" },
+        { time: "08-18 09:00", label: "종료", note: "감모율 정상 범위 복귀" },
+      ],
+    },
+    {
+      id: "NTF-20260816-01",
+      rule: "price_jump",
+      level: "info",
+      title: "무 경락가 급락",
+      summary: "전일 대비 -8.6%로 임계치를 넘었습니다.",
+      detectedAt: "2026-08-16 06:15",
+      relativeTime: "8월 16일",
+      observed: "-8.6% (742원/kg)",
+      threshold: "전일 대비 ±8%",
+      channel: "이메일 · 대시보드",
+      status: "done",
+      refId: "kamis_auction_20260816",
+      target: { page: "market", label: "시장 시세에서 확인" },
+      detail:
+        "무 반입량이 평년 대비 크게 늘며 경락가가 하락했습니다. 하락은 매입 측면에서 기회이므로 당일 무 매입 비중을 늘렸습니다.",
+      impact: ["시나리오 C(배추 12톤 + 무 6톤) 채택의 근거가 되었습니다."],
+      timeline: [
+        { time: "06:15", label: "탐지", note: "경락가 임계 하회" },
+        { time: "06:48", label: "반영", note: "T1 시나리오 C 생성" },
+        { time: "09:20", label: "종료", note: "매입 완료 후 종료" },
+      ],
     },
   ],
 
@@ -1300,6 +1653,24 @@ window.AgriSimData = {
         cost: 371000000,
         profit: 60000000,
       },
+      {
+        period: "2025년 4분기",
+        revenue: 402000000,
+        cost: 352000000,
+        profit: 50000000,
+      },
+      {
+        period: "2025년 3분기",
+        revenue: 364000000,
+        cost: 324000000,
+        profit: 40000000,
+      },
+    ],
+    indicators: [
+      { label: "누적 매출", value: "9.2억원", sub: "최근 4개 분기" },
+      { label: "영업이익률", value: "16.1%", sub: "최근 분기" },
+      { label: "총 자산", value: "2.1억원", sub: "현금 · 재고 · 미수금" },
+      { label: "정기 거래처", value: "5곳", sub: "급식 · 유통 · 가공" },
     ],
   },
 };

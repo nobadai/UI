@@ -113,9 +113,9 @@ function financeExpensePage() {
                 <td><strong>${row.category}</strong></td>
                 <td>
                   <span
-                    class="status-badge status-${row.fixed
-                      ? "warning"
-                      : "success"}"
+                    class="status-badge status-${
+                      row.fixed ? "warning" : "success"
+                    }"
                     >${row.fixed ? "고정" : "변동"}</span
                   >
                 </td>
@@ -273,9 +273,9 @@ function financePayrollPage() {
                 <td>${row.role}</td>
                 <td>
                   <span
-                    class="status-badge status-${row.type === "정규"
-                      ? "success"
-                      : "warning"}"
+                    class="status-badge status-${
+                      row.type === "정규" ? "success" : "warning"
+                    }"
                     >${row.type}</span
                   >
                 </td>

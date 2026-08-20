@@ -1,29 +1,105 @@
 function init() {
-  document.title = `${BRAND.name} | ${BRAND.eng}`;
   $$("[data-brand-name]").forEach((el) => (el.textContent = BRAND.name));
-  $$("[data-brand-eng]").forEach((el) => (el.textContent = BRAND.eng));
-  $("#mainNav").innerHTML = nav
-    .map((item) =>
-      item.section
-        ? html`<div class="nav-label">${item.section}</div>`
-        : html`<button
-            class="nav-item ${item.sub ? "sub" : ""}"
-            data-page="${item.page}"
-          >
-            <span class="nav-icon">${iconSvg(item.icon)}</span>${item.label}
-          </button>`,
-    )
-    .join("");
+  const initial = location.hash.replace("#/", "") || "dashboard";
+  const group = findNavEntry(initial).group;
+  if (group && group.label && !state.openGroups.includes(group.id))
+    state.openGroups.push(group.id);
+  renderNav();
   bindGlobal();
-  route(location.hash.replace("#/", "") || "dashboard", false);
+  updateNotificationBadge();
+  route(initial, false);
   seedChat();
   window.setTimeout(() => $("#appLoader")?.classList.add("is-hidden"), 650);
 }
 
+/** 그룹 단위 접이식 사이드바. 현재 화면이 속한 그룹은 항상 펼쳐 둡니다. */
+function renderNav() {
+  $("#mainNav").innerHTML = navGroups
+    .map((group) => {
+      const items = group.items
+        .map(
+          (item) =>
+            html`<button
+              class="nav-item ${group.label ? "sub" : ""} ${
+                item.page === state.page ? "active" : ""
+              }"
+              data-page="${item.page}"
+            >
+              <span class="nav-icon">${iconSvg(item.icon)}</span>${item.label}
+            </button>`,
+        )
+        .join("");
+      if (!group.label) return html`<div class="nav-group">${items}</div>`;
+      const open =
+        state.openGroups.includes(group.id) ||
+        group.items.some((item) => item.page === state.page);
+      return html`<div class="nav-group ${open ? "open" : ""}">
+        <button
+          class="nav-group-toggle"
+          data-nav-group="${group.id}"
+          aria-expanded="${open}"
+        >
+          <span class="nav-icon">${iconSvg(group.icon)}</span>${group.label}
+          <b aria-hidden="true">⌄</b>
+        </button>
+        <div class="nav-group-items">${items}</div>
+      </div>`;
+    })
+    .join("");
+}
+
+/** 헤더 알림 버튼의 요약 팝오버. 상세 화면은 관리 > 알림 로그가 담당합니다. */
+function openNotificationPopover() {
+  const popover = $("#notificationPopover");
+  if (!popover) return;
+  popover.innerHTML = notificationPopoverContent();
+  popover.hidden = false;
+  $("#notificationButton")?.setAttribute("aria-expanded", "true");
+}
+
+function closeNotificationPopover() {
+  const popover = $("#notificationPopover");
+  if (!popover || popover.hidden) return;
+  popover.hidden = true;
+  popover.innerHTML = "";
+  $("#notificationButton")?.setAttribute("aria-expanded", "false");
+}
+
 function bindGlobal() {
   document.addEventListener("click", (e) => {
+    // 알림 팝오버: 바깥을 누르면 닫고, 안쪽 동작은 아래에서 개별 처리합니다.
+    if (!e.target.closest(".notification-wrap")) closeNotificationPopover();
+    if (e.target.closest("#markAllReadButton")) {
+      markAllNotificationsRead();
+      openNotificationPopover();
+      toast("알림을 모두 확인 처리했습니다.");
+      return;
+    }
+    const notificationTarget = e.target.closest("[data-notification]");
+    if (notificationTarget) {
+      closeNotificationPopover();
+      const id = notificationTarget.dataset.notification;
+      if (state.page === "notifications") {
+        selectNotification(id);
+      } else {
+        state.notification = id;
+        markNotificationRead(id);
+        route("notifications");
+      }
+      return;
+    }
+    const groupToggle = e.target.closest("[data-nav-group]");
+    if (groupToggle) {
+      const id = groupToggle.dataset.navGroup;
+      state.openGroups = state.openGroups.includes(id)
+        ? state.openGroups.filter((item) => item !== id)
+        : [...state.openGroups, id];
+      renderNav();
+      return;
+    }
     const pageTarget = e.target.closest("[data-page]");
     if (pageTarget) {
+      closeNotificationPopover();
       route(pageTarget.dataset.page);
       $("#sidebar").classList.remove("open");
     }
@@ -55,25 +131,28 @@ function bindGlobal() {
   $("#itemButton").innerHTML = `${findItem().name} <span>⌄</span>`;
   $("#sidebarOpen").onclick = () => $("#sidebar").classList.add("open");
   $("#sidebarClose").onclick = () => $("#sidebar").classList.remove("open");
-  $("#notificationButton").onclick = () => {
-    route("anomaly");
-    toast("이상치 탐지 알림 3건을 불러왔습니다.");
+  $("#notificationButton").onclick = (event) => {
+    event.stopPropagation();
+    if ($("#notificationPopover")?.hidden === false) closeNotificationPopover();
+    else openNotificationPopover();
   };
   $("#helpButton").onclick = () =>
     openModal(
-      `${BRAND.name} 도움말`,
+      `${BRAND.name} 운영 시스템 도움말`,
       html`<p>
           정의서 v0.5의 일일 파이프라인(T0 → T4)을 화면으로 옮긴
           프로토타입입니다.
         </p>
         <div class="modal-detail">
           <strong>T0</strong> 대시보드에서 오늘의 상태 스냅샷을 확인합니다.<br />
-          <strong>T1~T3</strong> 매입 &gt; 금일 제안 상세에서 시나리오, 3부서
-          제약 회신, 변경안 결합, Critic 결과를 검토하고 승인합니다.<br />
+          <strong>T1~T3</strong> AI 의사결정 &gt; 금일 제안 상세에서 시나리오,
+          3부서 제약 회신, 변경안 결합, Critic 결과를 검토하고 승인합니다.<br />
           <strong>T4</strong> 승인 후 재무·재고 화면에 반영 결과가 기록됩니다.
         </div>
         <p>
-          오른쪽 아래 AI 챗봇에서도 현재 화면의 Mock Data를 질문할 수 있습니다.
+          외부 고객이 보는 기업 홈페이지는 헤더의
+          <strong>홈페이지</strong> 버튼으로 열 수 있고, 콘텐츠는
+          <strong>관리 &gt; 외부 페이지 관리</strong>에서 수정합니다.
         </p>`,
     );
   $("#chatLauncher").onclick = openChat;
@@ -85,6 +164,7 @@ function bindGlobal() {
   };
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
+      closeNotificationPopover();
       closeModal();
       closeChat();
       $("#sidebar").classList.remove("open");
@@ -127,47 +207,40 @@ const subtitles = {
   "member-new": "새 계정을 생성하고 권한과 담당 파트를 지정합니다.",
   members: "계정 권한과 상태를 관리합니다. 최상위 관리자만 접근합니다.",
   company: "상호명·대표번호·위치·이메일을 관리하며 외부 페이지와 연동됩니다.",
+  "public-site":
+    "외부 기업 홈페이지에 노출되는 소개글, 대표 이미지, 안내 문구를 관리합니다.",
   anomaly: "임계치를 넘은 이벤트를 감지하는 규칙과 전달 채널을 설정합니다.",
-  external: "로그인 전 외부 사용자에게 공개되는 화면 구성입니다.",
+  notifications:
+    "실제로 발송된 알림의 발생 시각, 관측값, 처리 이력을 확인합니다.",
   personas:
     "고정지출과 수요를 산정하기 위한 시뮬레이션 페르소나 정의 상태입니다.",
   errors: "오류·점검 상태별 사용자 안내 화면을 확인합니다.",
 };
-
-/** 사이드바 순서를 이용해 breadcrumb의 상위 섹션을 찾습니다. */
-function findSection(page) {
-  let current = "";
-  for (const entry of nav) {
-    if (entry.section) current = entry.section;
-    else if (entry.page === page) return entry.sub ? current : "";
-  }
-  return "";
-}
 
 function route(page, push = true) {
   document.body.classList.add("route-loading");
   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   state.page = page;
   if (push) location.hash = `/${page}`;
-  $$(".nav-item").forEach((b) =>
-    b.classList.toggle("active", b.dataset.page === page),
-  );
+  const { item: found, group } = findNavEntry(page);
+  if (group && group.label && !state.openGroups.includes(group.id))
+    state.openGroups.push(group.id);
+  renderNav();
   $$(".mobile-bottom-nav [data-page]").forEach((button) =>
     button.classList.toggle("active", button.dataset.page === page),
   );
-  const found = nav.find((item) => item.page === page);
-  const section = findSection(page);
   $("#pageTitle").textContent = found?.label || BRAND.name;
   $("#pageSubtitle").textContent = subtitles[page] || "";
-  $("#breadcrumb").textContent = [BRAND.name, section, found?.label]
+  $("#breadcrumb").textContent = [BRAND.name, group?.label, found?.label]
     .filter(Boolean)
     .join(" / ");
   const renderer = pages[page] || pages.dashboard;
   $("#appMain").classList.remove("page-enter");
   $("#appMain").innerHTML = renderer();
   void $("#appMain").offsetWidth;
-  $("#appMain").classList.add("page-enter");
   $("#appMain").focus({ preventScroll: true });
+  void $("#appMain").offsetWidth;
+  $("#appMain").classList.add("page-enter");
   bindPage(page);
   setTimeout(() => document.body.classList.remove("route-loading"), 360);
 }

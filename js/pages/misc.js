@@ -1,155 +1,7 @@
 // -----------------------------------------------------------------------------
-// 프로토타입 — 외부용 화면 / 시뮬레이션 페르소나 / 오류 화면 미리보기
+// 프로토타입 — 시뮬레이션 페르소나 / 오류 화면 미리보기
+// 외부 기업 홈페이지는 독립 문서(index.html 등)로 분리했습니다.
 // -----------------------------------------------------------------------------
-
-function externalPage() {
-  const external = MOCK.external;
-  const company = readStoredSettings("agriSim.company", MOCK.company);
-  return html`<div class="content external-page">
-    ${pageIntro(
-      "외부용 화면",
-      "로그인·회원가입 이전에 외부 사용자에게 공개되는 화면입니다 (정의서 §6.2).",
-      html`<div class="section-actions">
-        <a class="button ghost" href="login.html">로그인 화면 열기</a
-        ><a class="button secondary" href="signup.html">회원가입 화면 열기</a>
-      </div>`,
-    )}
-
-    <section class="guest-hero card">
-      <div>
-        <span class="status-badge status-success">산지 직거래 · 오픈 입찰</span>
-        <h2>${escapeHtml(company.name)}의<br />오늘 물량을 공개합니다.</h2>
-        <p>${escapeHtml(company.intro)}</p>
-        <div class="market-mini">
-          ${MOCK.items
-            .slice(0, 3)
-            .map(
-              (item) =>
-                html`<span
-                  >${item.name}
-                  <b class="${changeMark(item.change).tone}"
-                    >${changeMark(item.change).mark}
-                    ${changeMark(item.change).text}</b
-                  ></span
-                >`,
-            )
-            .join("")}
-        </div>
-        <button class="button primary" type="button" id="externalJoin">
-          오픈 채팅방 참여하기
-        </button>
-      </div>
-      <div class="external-visual">
-        <img
-          src="assets/02_actions/08_shopping_cart.png"
-          alt="물량을 옮기는 마스코트"
-          loading="lazy"
-        />
-      </div>
-    </section>
-
-    <div class="detail-grid">
-      ${sectionCard({
-        title: "오픈 채팅방",
-        desc: "유입을 유도하고 판매량을 유동적으로 조절합니다. 1차 소매 페르소나가 입찰 대상입니다.",
-        className: "chat-board-card",
-        body: html`<ul class="chat-board">
-          ${external.chatBids
-            .map(
-              (bid) =>
-                html`<li>
-                  <span class="chat-board-time">${bid.time}</span>
-                  <div>
-                    <strong>${escapeHtml(bid.nick)}</strong>
-                    <p>${escapeHtml(bid.message)}</p>
-                  </div>
-                  <span
-                    class="status-badge status-${bid.state === "검토 중"
-                      ? "warning"
-                      : "success"}"
-                    >${bid.state}</span
-                  >
-                </li>`,
-            )
-            .join("")}
-        </ul>`,
-      })}
-      ${sectionCard({
-        title: "산지 계약",
-        desc: "계약 체결 문서를 메일로 발송합니다.",
-        body: dataTable(
-          ["계약 번호", "산지", "품목", "물량", "상태"],
-          external.contracts
-            .map(
-              (contract) =>
-                html`<tr>
-                  <td><code class="ref-id">${contract.no}</code></td>
-                  <td><strong>${contract.farm}</strong></td>
-                  <td>${contract.item}</td>
-                  <td>${contract.volume}</td>
-                  <td>
-                    <span
-                      class="status-badge status-${contract.state ===
-                      "서명 대기"
-                        ? "warning"
-                        : "success"}"
-                      >${contract.state}</span
-                    >
-                  </td>
-                </tr>`,
-            )
-            .join(""),
-        ),
-      })}
-    </div>
-
-    <div class="detail-grid">
-      ${sectionCard({
-        title: "재무제표 확인",
-        desc: "회사 공개데이터로 열람할 수 있는 분기 실적입니다.",
-        body: dataTable(
-          ["기간", "매출", "매출원가", "영업이익", "이익률"],
-          external.statements
-            .map(
-              (row) =>
-                html`<tr>
-                  <td><strong>${row.period}</strong></td>
-                  <td>${money(row.revenue)}</td>
-                  <td>${money(row.cost)}</td>
-                  <td class="positive">${money(row.profit)}</td>
-                  <td>${((row.profit / row.revenue) * 100).toFixed(1)}%</td>
-                </tr>`,
-            )
-            .join(""),
-        ),
-      })}
-      ${sectionCard({
-        title: "사용자 인증 · 외부 페이지 관리",
-        desc: "인증 수단과 외부 페이지 콘텐츠는 관리자 화면의 회사 관리와 연동됩니다.",
-        body: html`<ul class="external-feature-list">
-          <li>
-            <strong>메일 인증</strong><span>회원가입 시 인증 메일 발송</span>
-          </li>
-          <li><strong>OAuth 2.0</strong><span>외부 계정 연동 로그인</span></li>
-          <li>
-            <strong>소개글</strong
-            ><span>${escapeHtml(company.intro.slice(0, 40))}…</span>
-          </li>
-          <li>
-            <strong>대표 이미지</strong
-            ><span>외부 페이지 관리 테이블에서 관리</span>
-          </li>
-          <li>
-            <strong>회사 정보</strong
-            ><span
-              >${escapeHtml(company.phone)} · ${escapeHtml(company.email)}</span
-            >
-          </li>
-        </ul>`,
-      })}
-    </div>
-  </div>`;
-}
 
 function personasPage() {
   const defined = MOCK.personas.filter((p) => p.state === "정의 완료").length;
@@ -194,11 +46,13 @@ function personasPage() {
                 <td>${persona.role}</td>
                 <td>
                   <span
-                    class="status-badge status-${persona.state === "정의 완료"
-                      ? "success"
-                      : persona.state === "정의 필요"
-                        ? "danger"
-                        : "warning"}"
+                    class="status-badge status-${
+                      persona.state === "정의 완료"
+                        ? "success"
+                        : persona.state === "정의 필요"
+                          ? "danger"
+                          : "warning"
+                    }"
                     >${persona.state}</span
                   >
                 </td>

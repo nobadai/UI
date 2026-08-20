@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// 설정 — 회원 생성 / 회원 관리(최상위만) / 회사 관리 / 이상치 탐지 알림
+// 관리 — 회원 생성 / 회원 관리(최상위만) / 회사 관리 / 외부 페이지 관리 / 이상치 탐지 알림
 // 변경 사항은 localStorage에 저장되는 프로토타입 동작입니다.
 // -----------------------------------------------------------------------------
 
@@ -7,6 +7,7 @@ const settingsMenu = [
   { label: "회원 생성", page: "member-new" },
   { label: "회원 관리", page: "members", topOnly: true },
   { label: "회사 관리", page: "company" },
+  { label: "외부 페이지 관리", page: "public-site" },
   { label: "이상치 탐지 알림", page: "anomaly" },
 ];
 
@@ -29,9 +30,9 @@ function settingsShell(activePage, panel) {
                 class="${item.page === activePage ? "active" : ""}"
                 data-page="${item.page}"
               >
-                ${item.label}${item.topOnly
-                  ? '<small class="menu-flag">최상위</small>'
-                  : ""}
+                ${item.label}${
+                  item.topOnly ? '<small class="menu-flag">최상위</small>' : ""
+                }
               </button>`,
           )
           .join("")}
@@ -172,9 +173,9 @@ function membersPage() {
                 <td>${member.team}</td>
                 <td>
                   <span
-                    class="status-badge status-${member.role === "최상위 관리자"
-                      ? "success"
-                      : "warning"}"
+                    class="status-badge status-${
+                      member.role === "최상위 관리자" ? "success" : "warning"
+                    }"
                     >${member.role}</span
                   >
                 </td>
@@ -225,9 +226,9 @@ function companyPage() {
         <div>
           <span>상호명</span
           ><strong id="companyNamePreview">${escapeHtml(saved.name)}</strong>
-          <small>회사명은 정의서 §10.3 기준 미확정 상태입니다.</small>
+          <small>외부 홈페이지 헤더·푸터와 회사소개에 함께 표시됩니다.</small>
         </div>
-        <span class="status-badge status-warning">가칭</span>
+        <span class="status-badge status-success">확정</span>
       </div>
       <div class="editable-form-grid">
         <label
@@ -282,8 +283,7 @@ function companyPage() {
         <label class="form-wide"
           ><span>외부 페이지 소개글</span
           ><textarea class="search-input" name="intro" rows="3">
-${escapeHtml(saved.intro)}</textarea
-          >
+${escapeHtml(saved.intro)}</textarea>
         </label>
       </div>
       <section class="settings-section">
@@ -297,6 +297,183 @@ ${escapeHtml(saved.intro)}</textarea
           이미지 자리 · 외부 페이지 관리 테이블과 연동
         </div>
       </section>
+    </form>`,
+  );
+}
+
+// ------------------------------------------------------------ 외부 페이지 관리
+/**
+ * 외부 기업 홈페이지에 그대로 노출되는 콘텐츠입니다.
+ * 저장 값은 agriSim.publicSite에 들어가고 index.html 등 PUBLIC 화면이 즉시 읽습니다.
+ */
+function publicSitePage() {
+  const site = publicSiteContent();
+  return settingsShell(
+    "public-site",
+    html`<form id="publicSiteForm">
+      <div class="settings-panel-header">
+        <div>
+          <h3>외부 페이지 관리</h3>
+          <p>
+            여기서 저장한 값이 기업 홈페이지의 Hero와 소개, 안내 문구에 그대로
+            반영됩니다.
+          </p>
+        </div>
+        <div class="settings-header-actions">
+          <a
+            class="button ghost"
+            href="index.html"
+            target="_blank"
+            rel="noopener"
+            >홈페이지 열기</a
+          ><button class="button primary" type="submit">
+            외부 콘텐츠 저장
+          </button>
+        </div>
+      </div>
+
+      <section class="settings-section">
+        <h4>Hero 콘텐츠 <small>홈 첫 화면에 표시됩니다</small></h4>
+        <div class="editable-form-grid">
+          <label class="form-wide"
+            ><span>상단 라벨</span
+            ><input
+              class="search-input"
+              name="heroEyebrow"
+              value="${escapeHtml(site.heroEyebrow)}"
+              required
+          /></label>
+          <label class="form-wide"
+            ><span>제목 · 줄바꿈은 Enter</span
+            ><textarea class="search-input" name="heroTitle" rows="2" required>
+${escapeHtml(site.heroTitle)}</textarea>
+          </label>
+          <label class="form-wide"
+            ><span>본문</span
+            ><textarea class="search-input" name="heroBody" rows="2" required>
+${escapeHtml(site.heroBody)}</textarea>
+          </label>
+          <label
+            ><span>주 버튼 문구</span
+            ><input
+              class="search-input"
+              name="heroPrimary"
+              value="${escapeHtml(site.heroPrimary)}"
+              required
+          /></label>
+          <label
+            ><span>보조 버튼 문구</span
+            ><input
+              class="search-input"
+              name="heroSecondary"
+              value="${escapeHtml(site.heroSecondary)}"
+              required
+          /></label>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <div class="settings-section-title">
+          <h4>대표 이미지</h4>
+          <button class="text-link" type="button" id="uploadHeroImage">
+            이미지 등록
+          </button>
+        </div>
+        <div class="intro-image-slot" aria-label="홈 Hero 대표 이미지 자리">
+          이미지 자리 · 실제 제품에서는 파일 업로드로 연결됩니다
+        </div>
+        <label class="field-label" for="heroImageCaption">이미지 설명</label>
+        <input
+          class="search-input"
+          id="heroImageCaption"
+          name="heroImageCaption"
+          value="${escapeHtml(site.heroImageCaption)}"
+          required
+        />
+      </section>
+
+      <section class="settings-section">
+        <h4>회사 소개 <small>회사소개 페이지 본문</small></h4>
+        <div class="editable-form-grid">
+          <label class="form-wide"
+            ><span>소개 제목</span
+            ><input
+              class="search-input"
+              name="aboutTitle"
+              value="${escapeHtml(site.aboutTitle)}"
+              required
+          /></label>
+          <label class="form-wide"
+            ><span>소개 본문</span
+            ><textarea class="search-input" name="aboutBody" rows="3" required>
+${escapeHtml(site.aboutBody)}</textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h4>파트너 안내 <small>파트너 페이지와 CTA에 사용됩니다</small></h4>
+        <div class="editable-form-grid">
+          <label class="form-wide"
+            ><span>CTA 제목</span
+            ><input
+              class="search-input"
+              name="ctaTitle"
+              value="${escapeHtml(site.ctaTitle)}"
+              required
+          /></label>
+          <label class="form-wide"
+            ><span>CTA 본문</span
+            ><textarea class="search-input" name="ctaBody" rows="2" required>
+${escapeHtml(site.ctaBody)}</textarea>
+          </label>
+          <label
+            ><span>거래처 문의 안내</span
+            ><input
+              class="search-input"
+              name="contactSales"
+              value="${escapeHtml(site.contact.sales)}"
+              required
+          /></label>
+          <label
+            ><span>산지 파트너 문의 안내</span
+            ><input
+              class="search-input"
+              name="contactFarm"
+              value="${escapeHtml(site.contact.farm)}"
+              required
+          /></label>
+          <label
+            ><span>상담 가능 시간</span
+            ><input
+              class="search-input"
+              name="contactHours"
+              value="${escapeHtml(site.contact.hours)}"
+              required
+          /></label>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h4>공개 경영정보 고지</h4>
+        <label class="field-label" for="disclosureNote">고지 문구</label>
+        <textarea
+          class="search-input"
+          id="disclosureNote"
+          name="disclosureNote"
+          rows="2"
+          required
+        >
+${escapeHtml(site.disclosureNote)}</textarea>
+      </section>
+
+      <div class="profile-security-note">
+        <strong>연동 범위</strong
+        ><span>
+          상호명·대표번호·위치·이메일은 <b>회사 관리</b>에서 관리하며 외부
+          페이지 푸터와 회사소개에 함께 표시됩니다.</span
+        >
+      </div>
     </form>`,
   );
 }

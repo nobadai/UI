@@ -39,9 +39,9 @@
       kicker: "페이지를 찾을 수 없음",
       title: "찾으시는 화면이 사라졌어요",
       description: "주소가 변경됐거나 존재하지 않는 페이지입니다.",
-      help: "대시보드에서 오늘의 상태 스냅샷과 파이프라인 진행 상황을 다시 확인해 보세요.",
-      primary: "대시보드로",
-      href: "index.html#/dashboard",
+      help: "홈페이지에서 회사 소개와 오늘의 시세를 확인하거나, 운영 시스템으로 이동해 주세요.",
+      primary: "홈으로",
+      href: "index.html",
     },
     500: {
       kicker: "서비스 오류",
@@ -88,27 +88,25 @@
         <div
           class="error-mascot"
           role="img"
-          aria-label="농산 캣쳐 마스코트"
+          aria-label="햇들 농산 마스코트"
         ></div>
       </section>
       <section class="error-copy">
-        <span class="error-kicker">AGRI CATCHER · ${state.kicker}</span>
+        <span class="error-kicker">HAETDEUL AGRI · ${state.kicker}</span>
         <div class="error-code">${code === "offline" ? "OFFLINE" : code}</div>
         <h1>${state.title}</h1>
         <p>${state.description}</p>
         <div class="error-help">${state.help}</div>
         <div class="error-actions">
           ${primaryAction}
-          <a class="error-secondary" href="index.html#/dashboard">
-            메인으로 이동
-          </a>
+          <a class="error-secondary" href="index.html"> 홈페이지로 이동 </a>
         </div>
       </section>
     `;
   }
   document.querySelector("[data-back]")?.addEventListener("click", () => {
     if (history.length > 1) history.back();
-    else location.href = "index.html#/dashboard";
+    else location.href = "index.html";
   });
   document
     .querySelector("[data-retry]")

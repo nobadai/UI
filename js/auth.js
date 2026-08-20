@@ -34,7 +34,7 @@
         `${button.dataset.social} 로그인은 시안에서 대시보드로 연결됩니다.`,
         true,
       );
-      setTimeout(() => (location.href = "index.html#/dashboard"), 450);
+      setTimeout(() => (location.href = "admin.html#/dashboard"), 450);
     }),
   );
   document
@@ -93,6 +93,6 @@
       );
       setMessage("회원가입이 완료되었습니다. 대시보드로 이동합니다.", true);
     } else setMessage("로그인되었습니다. 대시보드로 이동합니다.", true);
-    setTimeout(() => (location.href = "index.html#/dashboard"), 650);
+    setTimeout(() => (location.href = "admin.html#/dashboard"), 650);
   });
 })();

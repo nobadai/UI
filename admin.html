@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta
+      name="description"
+      content="가상 농산물 유통회사 AI 에이전트 시뮬레이션 관리자 화면"
+    />
+    <title>운영 시스템 | 햇들 농산</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/components/loading.css" />
+    <link rel="stylesheet" href="css/components/mascot.css" />
+    <link rel="stylesheet" href="css/components/responsive.css" />
+    <link
+      rel="stylesheet"
+      id="pageStyle"
+      href="css/pages/app-pages.css?v=20260820-2"
+    />
+  </head>
+  <body>
+    <div class="app-loader" id="appLoader" role="status" aria-live="polite">
+      <div
+        class="loading-mascot"
+        role="img"
+        aria-label="오늘의 상태를 확인하는 마스코트"
+      ></div>
+      <strong>오늘의 상태 스냅샷을 모으고 있어요</strong>
+      <span>가용자금 · 재고 · 확정주문 · 예측을 불러오는 중입니다.</span>
+      <div class="loading-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+    </div>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar" aria-label="주 메뉴">
+        <div class="brand">
+          <button
+            class="brand-home"
+            data-page="dashboard"
+            aria-label="메인 대시보드로 이동"
+          >
+            <svg class="brand-mark" viewBox="0 0 44 48" aria-hidden="true">
+              <path d="M22 2 40 9v25L22 46 4 34V9Z" fill="currentColor" />
+              <path
+                d="m13 18 4-5 5 3 5-3 4 5v9c0 6-4 10-9 10s-9-4-9-10Z"
+                fill="#fff"
+              />
+              <circle cx="18.5" cy="24" r="1.5" fill="currentColor" />
+              <circle cx="25.5" cy="24" r="1.5" fill="currentColor" />
+              <path
+                d="M19 29q3 3 6 0"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span
+              ><strong data-brand-name>햇들 농산</strong
+              ><small>OPERATIONS</small></span
+            >
+          </button>
+          <button
+            class="icon-btn sidebar-close"
+            id="sidebarClose"
+            aria-label="메뉴 닫기"
+          >
+            ×
+          </button>
+        </div>
+        <nav id="mainNav"></nav>
+        <div class="sidebar-insight">
+          <div
+            class="sidebar-mascot mascot-binoculars"
+            role="img"
+            aria-label="오늘의 제안을 살피는 마스코트"
+          ></div>
+          <div>
+            <span class="eyebrow">TODAY PIPELINE</span>
+            <strong>조정 완료.<br />승인만 남았어요.</strong>
+            <button type="button" data-page="proposal">제안 상세 보기 →</button>
+          </div>
+        </div>
+      </aside>
+
+      <div class="workspace">
+        <header class="topbar">
+          <button
+            class="icon-btn mobile-menu"
+            id="sidebarOpen"
+            aria-label="메뉴 열기"
+          >
+            ☰
+          </button>
+          <div class="page-heading">
+            <span id="breadcrumb">햇들 농산 / 대시보드</span>
+            <h1 id="pageTitle">대시보드</h1>
+            <p id="pageSubtitle">
+              오늘의 상태 스냅샷과 일일 파이프라인 진행 상황을 확인하세요.
+            </p>
+          </div>
+          <div class="header-actions">
+            <a class="site-link-button" href="index.html" title="기업 홈페이지">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path
+                  d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"
+                /></svg
+              ><span>홈페이지</span>
+            </a>
+            <div class="notification-wrap">
+              <button
+                class="icon-btn notification-button"
+                id="notificationButton"
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                aria-label="알림 보기"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"
+                  /></svg
+                ><span id="notificationBadge">3</span>
+              </button>
+              <div
+                class="notification-popover"
+                id="notificationPopover"
+                role="dialog"
+                aria-label="알림 요약"
+                hidden
+              ></div>
+            </div>
+            <button class="help-button" id="helpButton">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path
+                  d="M9.6 9a2.5 2.5 0 1 1 3.4 2.3c-1 .4-1 1.2-1 2.2M12 17h.01"
+                /></svg
+              ><span>도움말</span>
+            </button>
+            <div class="dropdown-wrap">
+              <button
+                class="select-button"
+                id="itemButton"
+                aria-label="기준 품목 선택"
+              >
+                배추 <span>⌄</span>
+              </button>
+              <div class="dropdown" id="itemDropdown"></div>
+            </div>
+            <button class="profile" data-page="members">
+              <span class="avatar">현</span
+              ><span
+                ><strong>이현서 님</strong><small>최상위 관리자</small></span
+              ><b>⌄</b>
+            </button>
+          </div>
+        </header>
+
+        <main id="appMain" tabindex="-1"></main>
+      </div>
+    </div>
+
+    <nav class="mobile-bottom-nav" aria-label="모바일 빠른 메뉴">
+      <button type="button" data-page="dashboard" aria-label="대시보드">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
+          <rect x="14" y="14" width="7" height="7" rx="1" />
+        </svg>
+        <span>홈</span>
+      </button>
+      <button type="button" data-page="forecast" aria-label="가격 예측">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 19V5M4 19h16M7 15l4-5 3 2 5-6" />
+        </svg>
+        <span>예측</span>
+      </button>
+      <button type="button" data-page="proposal" aria-label="금일 제안 상세">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="4" y="7" width="16" height="12" rx="3" />
+          <path d="M12 3v4M9 12h.01M15 12h.01M9.5 16h5" />
+        </svg>
+        <span>매입</span>
+      </button>
+      <button type="button" data-page="inventory-status" aria-label="재고 현황">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3 3.5 7.2v9.6L12 21l8.5-4.2V7.2Z" />
+          <path d="M3.5 7.2 12 11.4l8.5-4.2M12 11.4V21" />
+        </svg>
+        <span>재고</span>
+      </button>
+      <button type="button" data-page="company" aria-label="관리">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="3" />
+          <path
+            d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"
+          />
+        </svg>
+        <span>관리</span>
+      </button>
+    </nav>
+
+    <button class="chat-launcher" id="chatLauncher">
+      <span>AI</span> 유통 시뮬레이션 챗봇
+    </button>
+    <aside
+      class="chat-panel"
+      id="chatPanel"
+      aria-label="유통 시뮬레이션 AI 챗봇"
+      aria-hidden="true"
+    >
+      <header>
+        <div>
+          <span class="chat-logo">AI</span><strong>유통 시뮬레이션 챗봇</strong>
+        </div>
+        <button id="chatMinimize" aria-label="챗봇 닫기">×</button>
+      </header>
+      <div class="chat-context">
+        <span class="live-dot"></span
+        ><span id="chatContext">오늘 데이터를 기준으로 답변합니다</span>
+      </div>
+      <div class="chat-hero">
+        <div
+          class="mascot-crop mascot-magnifier"
+          role="img"
+          aria-label="데이터를 살펴보는 마스코트"
+        ></div>
+        <div>
+          <strong>근거를 보면, 판단이 보여요!</strong
+          ><span>매입 제안과 부서 제약을 물어보세요.</span>
+        </div>
+      </div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <form class="chat-form" id="chatForm">
+        <input
+          id="chatInput"
+          placeholder="메시지를 입력하세요..."
+          autocomplete="off"
+          aria-label="챗봇 메시지"
+        /><button type="submit" aria-label="메시지 보내기">➤</button>
+      </form>
+    </aside>
+
+    <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+    <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+      <section
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+      >
+        <button class="modal-close" id="modalClose" aria-label="닫기">×</button>
+        <div id="modalContent"></div>
+      </section>
+    </div>
+    <!-- Static prototype dependency order mirrors future Next.js boundaries. -->
+    <script src="js/data/mock-data.js"></script>
+    <script src="js/core/shared.js"></script>
+    <script src="js/core/config.js"></script>
+    <script src="js/core/router.js"></script>
+
+    <script src="js/pages/dashboard.js"></script>
+    <script src="js/pages/forecast.js"></script>
+    <script src="js/pages/purchase.js"></script>
+    <script src="js/pages/finance.js"></script>
+    <script src="js/pages/operations.js"></script>
+    <script src="js/pages/settings.js"></script>
+    <script src="js/pages/notifications.js"></script>
+    <script src="js/pages/misc.js"></script>
+
+    <script src="js/core/page-registry.js"></script>
+    <script src="js/core/page-events.js"></script>
+    <script src="js/core/settings-events.js"></script>
+    <script src="js/components/chart.js"></script>
+    <script src="js/components/chat-ui.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

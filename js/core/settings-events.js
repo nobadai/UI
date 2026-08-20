@@ -12,6 +12,7 @@ function bindSettingsNavigation() {
 function bindSettingsPanel() {
   bindMemberForms();
   bindCompanyForm();
+  bindPublicSiteForm();
   bindAnomalyForm();
 }
 
@@ -68,6 +69,46 @@ function bindCompanyForm() {
     );
     localStorage.setItem("agriSim.company", JSON.stringify(data));
     toast("회사 정보를 저장했습니다. 외부용 화면에도 함께 반영됩니다.");
+  });
+}
+
+/**
+ * 외부 페이지 콘텐츠 저장.
+ * PUBLIC 화면은 publicSiteContent()로 이 값을 읽으므로 저장 즉시 반영됩니다.
+ */
+function bindPublicSiteForm() {
+  const form = $("#publicSiteForm");
+  if (!form) return;
+
+  $("#uploadHeroImage")?.addEventListener("click", () =>
+    toast("대표 이미지는 실제 제품에서 파일 업로드로 연결됩니다."),
+  );
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = Object.fromEntries(
+      new FormData(event.currentTarget).entries(),
+    );
+    const stored = {
+      heroEyebrow: data.heroEyebrow,
+      heroTitle: data.heroTitle,
+      heroBody: data.heroBody,
+      heroPrimary: data.heroPrimary,
+      heroSecondary: data.heroSecondary,
+      heroImageCaption: data.heroImageCaption,
+      aboutTitle: data.aboutTitle,
+      aboutBody: data.aboutBody,
+      ctaTitle: data.ctaTitle,
+      ctaBody: data.ctaBody,
+      disclosureNote: data.disclosureNote,
+      contact: {
+        sales: data.contactSales,
+        farm: data.contactFarm,
+        hours: data.contactHours,
+      },
+    };
+    localStorage.setItem("agriSim.publicSite", JSON.stringify(stored));
+    toast("외부 페이지 콘텐츠를 저장했습니다. 홈페이지에 바로 반영됩니다.");
   });
 }
 

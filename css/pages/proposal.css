@@ -476,3 +476,14 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* 가격 유형 정의 카드는 값이 아니라 설명이므로 KPI 숫자 크기를 쓰지 않습니다. */
+.type-card strong {
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: -0.2px;
+}
+.type-card small {
+  margin-top: 6px;
+  font-family: "Inter", monospace;
+}
