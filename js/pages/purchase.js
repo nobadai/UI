@@ -8,9 +8,9 @@ function scenarioCards() {
     .map(
       (scenario) =>
         html`<article
-          class="card scenario-card ${state.scenario === scenario.id
-            ? "active"
-            : ""}"
+          class="card scenario-card ${
+            state.scenario === scenario.id ? "active" : ""
+          }"
           data-scenario="${scenario.id}"
           tabindex="0"
         >
@@ -28,11 +28,13 @@ function scenarioCards() {
             >
           </div>
           <p>${scenario.rationale}</p>
-          ${scenario.exceedReason
-            ? html`<div class="exceed-reason">
-                <strong>exceed_reason</strong>${scenario.exceedReason}
-              </div>`
-            : ""}
+          ${
+            scenario.exceedReason
+              ? html`<div class="exceed-reason">
+                  <strong>exceed_reason</strong>${scenario.exceedReason}
+                </div>`
+              : ""
+          }
           <div class="ref-list">
             ${scenario.refs
               .map((ref) => html`<code class="ref-id">${ref}</code>`)
@@ -65,41 +67,49 @@ function verdictCard(verdict) {
       <div>
         <dt>max_feasible_qty_kg</dt>
         <dd>
-          ${verdict.max_feasible_qty_kg === null
-            ? "—"
-            : `${won(verdict.max_feasible_qty_kg)}kg (${ton(verdict.max_feasible_qty_kg)})`}
+          ${
+            verdict.max_feasible_qty_kg === null
+              ? "—"
+              : `${won(verdict.max_feasible_qty_kg)}kg (${ton(verdict.max_feasible_qty_kg)})`
+          }
         </dd>
       </div>
       <div>
         <dt>max_feasible_amount_krw</dt>
         <dd>
-          ${verdict.max_feasible_amount_krw === null
-            ? "— (재무만 채웁니다)"
-            : money(verdict.max_feasible_amount_krw)}
+          ${
+            verdict.max_feasible_amount_krw === null
+              ? "— (재무만 채웁니다)"
+              : money(verdict.max_feasible_amount_krw)
+          }
         </dd>
       </div>
     </dl>
 
-    ${verdict.hard_constraints.length
-      ? html`<div class="constraint-block hard">
-          <strong>hard_constraints</strong>
-          <ul>
-            ${verdict.hard_constraints
-              .map((line) => html`<li>${line}</li>`)
-              .join("")}
-          </ul>
-        </div>`
-      : ""}
-    ${verdict.soft_warnings.length
-      ? html`<div class="constraint-block soft">
-          <strong>soft_warnings</strong>
-          <ul>
-            ${verdict.soft_warnings
-              .map((line) => html`<li>${line}</li>`)
-              .join("")}
-          </ul>
-        </div>`
-      : ""}
+    ${
+      verdict.hard_constraints.length
+        ? html`<div class="constraint-block hard">
+            <strong>hard_constraints</strong>
+            <ul>
+              ${verdict.hard_constraints
+                .map((line) => html`<li>${line}</li>`)
+                .join("")}
+            </ul>
+          </div>`
+        : ""
+    }
+    ${
+      verdict.soft_warnings.length
+        ? html`<div class="constraint-block soft">
+            <strong>soft_warnings</strong>
+            <ul>
+              ${verdict.soft_warnings
+                .map((line) => html`<li>${line}</li>`)
+                .join("")}
+            </ul>
+          </div>`
+        : ""
+    }
 
     <div class="verdict-reasoning">
       <strong>reasoning</strong>
@@ -118,39 +128,42 @@ function verdictCard(verdict) {
         .join("")}
     </div>
 
-    ${adjustment
-      ? html`<section class="adjustment-block">
-          <div class="adjustment-head">
-            <span class="axis-chip axis-${adjustment.axis}"
-              >axis: ${adjustment.axis} · ${AXIS_LABEL[adjustment.axis]}</span
+    ${
+      adjustment
+        ? html`<section class="adjustment-block">
+            <div class="adjustment-head">
+              <span class="axis-chip axis-${adjustment.axis}"
+                >axis: ${adjustment.axis} · ${AXIS_LABEL[adjustment.axis]}</span
+              >
+              <span class="policy-flag ${axisCheck.pass ? "pass" : "fail"}"
+                >축 검사 ${axisCheck.pass ? "PASS" : "FAIL"}</span
+              >
+            </div>
+            <strong>suggested_adjustment</strong>
+            <p>${adjustment.description}</p>
+            <div class="evidence-chips">
+              ${adjustment.evidences
+                .map(
+                  (evidence) =>
+                    html`<span class="evidence-chip"
+                      ><code class="ref-id">${evidence.ref_id}</code
+                      >${evidence.source} <b>${evidence.value}</b></span
+                    >`,
+                )
+                .join("")}
+            </div>
+            <small class="adjustment-note"
+              >허용 축:
+              ${axisCheck.allowed.map((axis) => AXIS_LABEL[axis]).join(" · ")} —
+              다른 부서 축에 대한 제안과 최종 결합 수량 제시는
+              금지입니다.</small
             >
-            <span class="policy-flag ${axisCheck.pass ? "pass" : "fail"}"
-              >축 검사 ${axisCheck.pass ? "PASS" : "FAIL"}</span
-            >
-          </div>
-          <strong>suggested_adjustment</strong>
-          <p>${adjustment.description}</p>
-          <div class="evidence-chips">
-            ${adjustment.evidences
-              .map(
-                (evidence) =>
-                  html`<span class="evidence-chip"
-                    ><code class="ref-id">${evidence.ref_id}</code
-                    >${evidence.source} <b>${evidence.value}</b></span
-                  >`,
-              )
-              .join("")}
-          </div>
-          <small class="adjustment-note"
-            >허용 축:
-            ${axisCheck.allowed.map((axis) => AXIS_LABEL[axis]).join(" · ")} —
-            다른 부서 축에 대한 제안과 최종 결합 수량 제시는 금지입니다.</small
-          >
-        </section>`
-      : html`<div class="adjustment-block empty">
-          <strong>suggested_adjustment</strong>
-          <p>verdict가 ok이므로 생략합니다 (불필요한 LLM 호출 방지).</p>
-        </div>`}
+          </section>`
+        : html`<div class="adjustment-block empty">
+            <strong>suggested_adjustment</strong>
+            <p>verdict가 ok이므로 생략합니다 (불필요한 LLM 호출 방지).</p>
+          </div>`
+    }
 
     <footer class="verdict-foot ${requirement.pass ? "" : "fail"}">
       생성 조건 검사: verdict=${verdict.verdict} → 변경안
@@ -237,28 +250,30 @@ function preFeedbackCard() {
         사용</span
       >
     </div>
-    ${orchestration.preFeedback.length
-      ? html`<ol class="feedback-list">
-          ${orchestration.preFeedback
-            .map(
-              (round) =>
-                html`<li>
-                  <div class="feedback-meta">
-                    <b>${round.round}회차</b><span>${round.time}</span>
-                  </div>
-                  <strong>트리거</strong>
-                  <p>${round.trigger}</p>
-                  <strong>완화 지시 (부서 변경안 그대로 전달)</strong>
-                  <p>${round.instruction}</p>
-                  <strong>결과</strong>
-                  <p>${round.result}</p>
-                </li>`,
-            )
-            .join("")}
-        </ol>`
-      : html`<div class="empty-state">
-          <strong>회송 없이 Critic으로 진행했습니다.</strong>
-        </div>`}
+    ${
+      orchestration.preFeedback.length
+        ? html`<ol class="feedback-list">
+            ${orchestration.preFeedback
+              .map(
+                (round) =>
+                  html`<li>
+                    <div class="feedback-meta">
+                      <b>${round.round}회차</b><span>${round.time}</span>
+                    </div>
+                    <strong>트리거</strong>
+                    <p>${round.trigger}</p>
+                    <strong>완화 지시 (부서 변경안 그대로 전달)</strong>
+                    <p>${round.instruction}</p>
+                    <strong>결과</strong>
+                    <p>${round.result}</p>
+                  </li>`,
+              )
+              .join("")}
+          </ol>`
+        : html`<div class="empty-state">
+            <strong>회송 없이 Critic으로 진행했습니다.</strong>
+          </div>`
+    }
     <div class="boundary-note">
       오케스트레이터는 원본 DB를 읽지 않습니다. 완화 지시는 부서가 회신에 담아
       올린 <code>suggested_adjustment</code>를 그대로 전달합니다.
@@ -277,9 +292,9 @@ function criticCard() {
         </p>
       </div>
       <span
-        class="status-badge status-${critic.result === "PASS"
-          ? "success"
-          : "danger"}"
+        class="status-badge status-${
+          critic.result === "PASS" ? "success" : "danger"
+        }"
         >${critic.result}</span
       >
     </div>
@@ -302,9 +317,9 @@ function criticCard() {
                   <td><span class="check-type">${check.type}</span></td>
                   <td>
                     <span
-                      class="status-badge status-${check.result === "PASS"
-                        ? "success"
-                        : "danger"}"
+                      class="status-badge status-${
+                        check.result === "PASS" ? "success" : "danger"
+                      }"
                       >${check.result}</span
                     >
                   </td>
@@ -489,17 +504,17 @@ function proposalHistoryPage() {
                     <td>${row.pre}회 / ${row.post}회</td>
                     <td>
                       <span
-                        class="status-badge status-${row.critic === "PASS"
-                          ? "success"
-                          : "danger"}"
+                        class="status-badge status-${
+                          row.critic === "PASS" ? "success" : "danger"
+                        }"
                         >${row.critic}</span
                       >
                     </td>
                     <td>${row.adopted}</td>
                     <td
-                      class="${row.decision === "승인"
-                        ? "positive"
-                        : "negative"}"
+                      class="${
+                        row.decision === "승인" ? "positive" : "negative"
+                      }"
                     >
                       ${row.decision}
                     </td>
@@ -583,9 +598,11 @@ function marketRow(item) {
   return html`<tr class="market-row" data-item="${item.id}" tabindex="0">
     <td>
       <strong>${item.name}</strong>
-      ${item.coverage
-        ? '<small class="prediction-coverage">예측 검증</small>'
-        : ""}
+      ${
+        item.coverage
+          ? '<small class="prediction-coverage">예측 검증</small>'
+          : ""
+      }
     </td>
     <td>${won(item.retail)}원</td>
     <td>${won(item.wholesale)}원</td>

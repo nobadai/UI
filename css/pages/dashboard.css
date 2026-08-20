@@ -1,104 +1,201 @@
-/* 메인 대시보드 — T0 스냅샷 · 파이프라인 · 시세 카드 */
-#appMain .dashboard-middle {
-  align-items: stretch;
+/* ADMIN 메인 대시보드 — 상태 → 판단 흐름 → 시나리오 → 가격 */
+
+/* 기준 시점 스트립 */
+.asof-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin-bottom: 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--border);
+  overflow: hidden;
 }
-#appMain .dashboard-middle > .card {
-  min-width: 0;
+.asof-strip > div {
+  padding: 11px 14px;
+  background: #fbfcfa;
+}
+.asof-strip span {
+  display: block;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  color: #8b9691;
+  text-transform: uppercase;
+}
+.asof-strip strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.asof-strip small {
+  display: block;
+  margin-top: 2px;
+  font-size: 10.5px;
+  color: var(--text-secondary);
 }
 
-/* T0 스냅샷 카드에 붙는 출처 표기 */
-#appMain .kpi-card .ref-id {
-  margin-top: 8px;
-  align-self: flex-start;
-}
 #appMain .kpi-card {
   display: flex;
   flex-direction: column;
 }
-
-/* 파이프라인 T0 → T4 */
-.pipeline-card {
-  padding: 18px;
-  margin-bottom: 22px;
+#appMain .kpi-card .ref-id {
+  margin-top: 8px;
+  align-self: flex-start;
 }
-.pipeline-steps {
+
+/* 판단 흐름 + 승인 요약 */
+.dashboard-decision {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
+  gap: 14px;
+  margin-bottom: 22px;
+  /* 오른쪽 승인 카드를 왼쪽 파이프라인 높이에 맞춥니다. */
+  align-items: stretch;
+}
+.flow-card,
+.decision-card {
+  padding: 18px;
+}
+
+.agent-flow {
+  list-style: none;
   margin: 4px 0 0;
   padding: 0;
-  list-style: none;
-  counter-reset: pipeline;
+  display: grid;
+  gap: 8px;
 }
-.pipeline-step {
+.flow-node,
+.flow-branch {
   position: relative;
-  padding: 13px 13px 13px 14px;
+  padding: 12px 14px 12px 66px;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: #fbfcfa;
 }
-.pipeline-step:after {
+.agent-flow > li + li::before {
   content: "";
   position: absolute;
-  top: 50%;
-  right: -10px;
-  width: 10px;
-  height: 1px;
-  background: #d7e0da;
+  top: -8px;
+  left: 32px;
+  width: 1px;
+  height: 8px;
+  background: #cfdad4;
 }
-.pipeline-step:last-child:after {
-  display: none;
-}
-.pipeline-stage {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  color: var(--text-secondary);
+.flow-stage {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 44px;
+  padding: 3px 0;
+  border-radius: 6px;
   background: #eef2ef;
-  border-radius: 5px;
-  padding: 2px 6px;
+  color: var(--text-secondary);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: center;
 }
-.pipeline-step strong {
+.flow-node strong,
+.flow-branch-head strong {
   display: block;
-  margin: 7px 0 5px;
   font-size: 14px;
 }
-.pipeline-step small {
-  display: block;
-  font-size: 11px;
+.flow-node p {
+  margin: 3px 0 0;
+  font-size: 11.5px;
   line-height: 1.5;
   color: var(--text-secondary);
-  min-height: 48px;
 }
-.pipeline-step b {
-  display: block;
-  margin-top: 8px;
+.flow-node b {
+  position: absolute;
+  top: 13px;
+  right: 14px;
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   color: var(--text-secondary);
 }
-.pipeline-step.is-done {
+.flow-node.is-done {
   border-color: #cfe2d8;
   background: #f4faf6;
 }
-.pipeline-step.is-done .pipeline-stage {
+.flow-node.is-done .flow-stage {
   background: var(--success-bg);
   color: var(--success);
 }
-.pipeline-step.is-active {
+.flow-node.is-active {
   border-color: var(--primary);
   background: #fff;
   box-shadow: 0 6px 18px rgba(24, 92, 74, 0.12);
 }
-.pipeline-step.is-active .pipeline-stage {
+.flow-node.is-active .flow-stage {
   background: var(--primary);
   color: #fff;
 }
-.pipeline-step.is-waiting {
-  opacity: 0.68;
+.flow-node.is-fail {
+  border-color: #f0c9c3;
+  background: var(--danger-bg);
+}
+.flow-node.is-fail .flow-stage {
+  background: var(--danger);
+  color: #fff;
+}
+.flow-node.is-waiting {
+  opacity: 0.66;
   border-style: dashed;
 }
+
+.flow-branch {
+  border-color: #cfe2d8;
+  background: #f4faf6;
+}
+.flow-branch .flow-stage {
+  background: var(--success-bg);
+  color: var(--success);
+}
+.flow-branch-head small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.flow-agents {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.flow-agent {
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  border-top: 3px solid var(--border);
+}
+.flow-agent.agent-logistics {
+  border-top-color: var(--blue);
+}
+.flow-agent.agent-sales {
+  border-top-color: var(--warning);
+}
+.flow-agent.agent-finance {
+  border-top-color: var(--primary);
+}
+.flow-agent span {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+}
+.flow-agent b {
+  margin: 6px 0 4px;
+}
+.flow-agent small {
+  display: block;
+  font-size: 10.5px;
+  color: var(--text-secondary);
+}
+
 .pipeline-loops {
   display: flex;
   flex-wrap: wrap;
@@ -119,9 +216,8 @@
   font-weight: 800;
 }
 
-/* 오늘의 매입 판단 요약 */
+/* 승인 요약 */
 .decision-card {
-  padding: 18px;
   display: flex;
   flex-direction: column;
 }
@@ -166,6 +262,9 @@
   padding: 0;
   display: grid;
   gap: 8px;
+  /* 카드가 왼쪽 높이에 맞춰 늘어나도 축 카드는 원래 높이를 유지하고 가운데 모입니다. */
+  flex: 1;
+  align-content: center;
 }
 .axis-summary li {
   display: grid;
@@ -193,16 +292,92 @@
   margin-top: auto;
   padding-top: 14px;
 }
+.split-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
 
-/* 시세 카드 */
+/* 오늘의 매입 시나리오 */
+.scenario-summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 22px;
+}
+.scenario-brief {
+  padding: 15px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.scenario-brief:hover {
+  border-color: #b8cec4;
+  transform: translateY(-1px);
+}
+.scenario-brief header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.scenario-brief h3 {
+  margin: 0;
+  font-size: 14px;
+}
+.scenario-brief-figure {
+  margin: 10px 0 6px;
+}
+.scenario-brief-figure strong {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+  color: var(--primary);
+}
+.scenario-brief-figure span {
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.scenario-brief p {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+.scenario-brief-flag {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: var(--warning-bg);
+  color: #8a6100;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+/* 가격 · 품목 시세 */
+#appMain .dashboard-middle {
+  align-items: start;
+}
+#appMain .dashboard-middle > .card {
+  min-width: 0;
+}
+.watch-card {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+}
+.watch-card .price-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 12px;
+}
+.watch-card .text-link {
+  margin-top: auto;
+  align-self: flex-start;
+}
 #appMain .price-card {
   display: block;
   min-height: 0;
-  padding: 15px;
+  padding: 14px;
 }
 .price-spark {
-  margin: 10px 0 8px;
-  height: 34px;
+  margin: 9px 0 8px;
+  height: 30px;
 }
 .price-spark svg {
   width: 100%;
@@ -212,7 +387,7 @@
 .price-types {
   display: flex;
   gap: 10px;
-  padding-top: 9px;
+  padding-top: 8px;
   border-top: 1px solid var(--border);
 }
 .price-types span {
@@ -225,27 +400,37 @@
 }
 
 @media (max-width: 1279px) {
-  .pipeline-steps {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .pipeline-step:after {
-    display: none;
-  }
+  .dashboard-decision,
   #appMain .dashboard-middle {
-    grid-template-columns: minmax(0, 1.4fr) minmax(320px, 1fr);
+    grid-template-columns: 1fr;
+  }
+  .watch-card .price-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   }
 }
-@media (max-width: 1050px) {
-  #appMain .dashboard-middle {
+@media (max-width: 860px) {
+  .asof-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .scenario-summary {
     grid-template-columns: 1fr;
   }
 }
 @media (max-width: 700px) {
-  .pipeline-steps {
+  .flow-agents {
     grid-template-columns: 1fr;
   }
-  .pipeline-step small {
-    min-height: 0;
+  .flow-node,
+  .flow-branch {
+    padding-left: 14px;
+    padding-top: 38px;
+  }
+  .flow-node b {
+    top: 13px;
+    right: 14px;
+  }
+  .agent-flow > li + li::before {
+    left: 34px;
   }
   .decision-flow {
     grid-template-columns: 1fr;

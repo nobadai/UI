@@ -1,52 +1,27 @@
 // -----------------------------------------------------------------------------
-// 메인 대시보드 — T0 상태 스냅샷과 일일 파이프라인(T0 → T4) 진행 상황
+// ADMIN 메인 대시보드
+//
+// 이 화면이 답해야 하는 질문은 하나입니다.
+// "오늘 회사가 어떤 상태이며, 어떤 의사결정을 승인해야 하는가?"
+// 그래서 상태 → 판단 흐름 → 시나리오 → 가격 순서로 내려갑니다.
 // -----------------------------------------------------------------------------
 
-function pipelineTracker() {
-  return html`<section class="card pipeline-card">
-    <div class="section-head">
-      <div>
-        <h2>오늘의 파이프라인</h2>
-        <p>
-          ${MOCK.meta.asOfLabel} 기준 · 시뮬레이션
-          ${MOCK.meta.simulationDay}일차 (${MOCK.meta.simulationRange})
-        </p>
-      </div>
-      <button class="button secondary" type="button" data-page="proposal">
-        제안 상세 열기
-      </button>
+function asOfStrip() {
+  return html`<div class="asof-strip">
+    <div><span>기준일</span><strong>${MOCK.meta.asOfLabel}</strong></div>
+    <div>
+      <span>시뮬레이션</span><strong>${MOCK.meta.simulationDay}일차</strong
+      ><small>${MOCK.meta.simulationRange}</small>
     </div>
-    <ol class="pipeline-steps">
-      ${MOCK.pipeline
-        .map(
-          (step) =>
-            html`<li class="pipeline-step is-${step.state}">
-              <span class="pipeline-stage">${step.stage}</span>
-              <strong>${step.title}</strong>
-              <small>${step.detail}</small>
-              <b>${step.time}</b>
-            </li>`,
-        )
-        .join("")}
-    </ol>
-    <div class="pipeline-loops">
-      <span
-        >사전 feedback 루프
-        <b
-          >${MOCK.orchestration.loops.preUsed} /
-          ${MOCK.orchestration.loops.preMax}</b
-        ></span
-      >
-      <span
-        >사후 재조정 루프
-        <b
-          >${MOCK.orchestration.loops.postUsed} /
-          ${MOCK.orchestration.loops.postMax}</b
-        ></span
-      >
-      <span>두 루프 모두 소진 시 <b>매입 보류</b>로 안전 종료</span>
+    <div>
+      <span>as_of</span><strong>${MOCK.meta.asOf}</strong
+      ><small>이후 데이터 참조 금지</small>
     </div>
-  </section>`;
+    <div>
+      <span>자율성 모드</span><strong>제한</strong
+      ><small>사람이 최종 선택·승인</small>
+    </div>
+  </div>`;
 }
 
 function snapshotCards() {
@@ -62,21 +37,121 @@ function snapshotCards() {
     .join("");
 }
 
+/** T0 → T4를 흐름 그대로 세로로 배치하고, T2만 세 부서로 갈라 보여줍니다. */
+function agentFlow() {
+  const critic = MOCK.orchestration.critic;
+  const combined = MOCK.orchestration.combined;
+  const loops = MOCK.orchestration.loops;
+  return html`<section class="card flow-card">
+    <div class="section-head">
+      <div>
+        <h2>오늘의 Agent Pipeline</h2>
+        <p>T0 상태 배포부터 사람 승인까지 오늘 실제로 지나온 경로입니다.</p>
+      </div>
+      <button class="button secondary" type="button" data-page="proposal">
+        제안 상세 열기
+      </button>
+    </div>
+
+    <ol class="agent-flow">
+      <li class="flow-node is-done">
+        <span class="flow-stage">T0</span>
+        <strong>상태 스냅샷</strong>
+        <p>가용자금·재고·확정주문·예측을 전원에게 동일 배포</p>
+        <b>06:00</b>
+      </li>
+      <li class="flow-node is-done">
+        <span class="flow-stage">ML</span>
+        <strong>가격 예측</strong>
+        <p>${findItem().name} D+18 ${won(findItem().d18)}원/kg</p>
+        <b>06:05</b>
+      </li>
+      <li class="flow-node is-done">
+        <span class="flow-stage">T1</span>
+        <strong>매입 초안</strong>
+        <p>시나리오 3안 · A안은 예산 초과를 인지하고 제출</p>
+        <b>06:12</b>
+      </li>
+
+      <li class="flow-branch">
+        <span class="flow-stage">T2</span>
+        <div class="flow-branch-head">
+          <strong>제약 검토 · 3부서 병렬</strong>
+          <small>판정 + 데이터 + 이유 + 변경안</small>
+        </div>
+        <div class="flow-agents">
+          ${MOCK.verdicts
+            .map(
+              (verdict) =>
+                html`<div class="flow-agent agent-${verdict.agent}">
+                  <span>${verdict.agentLabel}</span>
+                  <b
+                    class="status-badge status-${
+                      VERDICT_STATUS[verdict.verdict]
+                    }"
+                    >${VERDICT_LABEL[verdict.verdict]}</b
+                  >
+                  <small
+                    >${
+                      verdict.suggested_adjustment
+                        ? `${AXIS_LABEL[verdict.suggested_adjustment.axis]} 축 변경안`
+                        : "변경안 없음"
+                    }</small
+                  >
+                </div>`,
+            )
+            .join("")}
+        </div>
+      </li>
+
+      <li class="flow-node is-done">
+        <span class="flow-stage">T3</span>
+        <strong>오케스트레이터 조정</strong>
+        <p>
+          ${MOCK.scenarios[0].qtyTon}톤 → ${combined.qtyTon}톤 ·
+          ${money(combined.amount)}
+        </p>
+        <b>06:31</b>
+      </li>
+      <li class="flow-node is-${critic.result === "PASS" ? "done" : "fail"}">
+        <span class="flow-stage">CRITIC</span>
+        <strong>검증 ${critic.result}</strong>
+        <p>코드 검사 3건 · LLM 대조 1건</p>
+        <b>${critic.time}</b>
+      </li>
+      <li class="flow-node is-active">
+        <span class="flow-stage">승인</span>
+        <strong>${MOCK.orchestration.decision.label}</strong>
+        <p>${MOCK.orchestration.decision.mode}</p>
+        <b>—</b>
+      </li>
+      <li class="flow-node is-waiting">
+        <span class="flow-stage">T4</span>
+        <strong>State DB 반영</strong>
+        <p>승인 후 현금·재고·손익이 다음 날 T0으로 넘어갑니다</p>
+        <b>-</b>
+      </li>
+    </ol>
+
+    <div class="pipeline-loops">
+      <span>사전 feedback 루프 <b>${loops.preUsed} / ${loops.preMax}</b></span>
+      <span>사후 재조정 루프 <b>${loops.postUsed} / ${loops.postMax}</b></span>
+      <span>두 루프 모두 소진 시 <b>매입 보류</b>로 안전 종료</span>
+    </div>
+  </section>`;
+}
+
 function decisionSummaryCard() {
   const combined = MOCK.orchestration.combined;
-  const critic = MOCK.orchestration.critic;
   const draft = MOCK.scenarios[0];
   return html`<article class="card decision-card">
     <div class="section-head">
       <div>
-        <h2>오늘의 매입 판단</h2>
-        <p>T1 초안에서 T3 조정까지의 결과 요약입니다.</p>
+        <h2>오늘 승인할 매입안</h2>
+        <p>세 부서 상한을 결합한 오케스트레이터 산출 결과입니다.</p>
       </div>
-      <span
-        class="status-badge status-${critic.result === "PASS"
-          ? "success"
-          : "danger"}"
-        >Critic ${critic.result}</span
+      <span class="status-badge status-warning"
+        >${MOCK.orchestration.decision.label}</span
       >
     </div>
     <div class="decision-flow">
@@ -105,14 +180,52 @@ function decisionSummaryCard() {
         .join("")}
     </ul>
     <div class="decision-footer">
-      <span class="status-badge status-warning"
-        >${MOCK.orchestration.decision.label}</span
+      <span class="split-hint"
+        >${combined.splits
+          .map((split) => `${split.when} ${split.qtyTon}톤`)
+          .join(" · ")}</span
       >
       <button class="text-link" type="button" data-page="proposal">
         판정 근거 보기 →
       </button>
     </div>
   </article>`;
+}
+
+/** 오늘의 매입 시나리오 요약. 상세 검토는 제안 상세 화면에서 합니다. */
+function scenarioSummary() {
+  return html`<div class="cards scenario-summary">
+    ${MOCK.scenarios
+      .map(
+        (scenario) =>
+          html`<article
+            class="card scenario-brief"
+            data-page="proposal"
+            tabindex="0"
+          >
+            <header>
+              <h3>${scenario.name}</h3>
+              <span
+                class="status-badge status-${VERDICT_STATUS[scenario.status]}"
+                >${VERDICT_LABEL[scenario.status]}</span
+              >
+            </header>
+            <div class="scenario-brief-figure">
+              <strong>${scenario.qtyTon}톤</strong>
+              <span>${money(scenario.amount)}</span>
+            </div>
+            <p>${scenario.items} · 단가 ${won(scenario.unitPrice)}원/kg</p>
+            ${
+              scenario.exceedReason
+                ? html`<small class="scenario-brief-flag"
+                    >exceed_reason 있음</small
+                  >`
+                : ""
+            }
+          </article>`,
+      )
+      .join("")}
+  </div>`;
 }
 
 function priceCards() {
@@ -126,9 +239,11 @@ function priceCards() {
         >
           <div>
             <h3>
-              ${item.name}${item.coverage
-                ? '<small class="prediction-coverage">예측 검증</small>'
-                : ""}
+              ${item.name}${
+                item.coverage
+                  ? '<small class="prediction-coverage">예측 검증</small>'
+                  : ""
+              }
             </h3>
             <div class="price-value">
               ${won(item.auction)}<small>${item.unit}</small>
@@ -174,13 +289,14 @@ function dashboardPage() {
       </button>
     </section>
 
+    ${asOfStrip()}
+
     <section>
       <div class="section-head">
         <div>
-          <h2>T0 상태 스냅샷</h2>
+          <h2>오늘의 상태</h2>
           <p>
-            ${MOCK.snapshot.asOf} 기준 · 오케스트레이터가 수집해 전원에게 동일
-            배포한 값입니다.
+            T0에서 오케스트레이터가 수집해 전원에게 동일 배포한 스냅샷입니다.
           </p>
         </div>
         <span class="status-badge status-success">as_of ${MOCK.meta.asOf}</span>
@@ -188,7 +304,25 @@ function dashboardPage() {
       <div class="cards kpi-grid">${snapshotCards()}</div>
     </section>
 
-    ${pipelineTracker()}
+    <section class="dashboard-decision">
+      ${agentFlow()} ${decisionSummaryCard()}
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>오늘의 매입 시나리오</h2>
+          <p>
+            T1 매입 초안 ${MOCK.scenarios.length}안. 카드를 누르면 상세 검토로
+            이동합니다.
+          </p>
+        </div>
+        <button class="text-link" type="button" data-page="proposal-history">
+          제안 이력 보기 →
+        </button>
+      </div>
+      ${scenarioSummary()}
+    </section>
 
     <section class="dashboard-middle">
       <article class="card chart-card">
@@ -211,23 +345,18 @@ function dashboardPage() {
         </div>
         <div class="chart-wrap" id="mainChart"></div>
       </article>
-      ${decisionSummaryCard()}
-    </section>
-
-    <section>
-      <div class="section-head">
-        <div>
-          <h2>취급 품목 시세</h2>
-          <p>
-            ${MOCK.meta.asOfLabel} 기준 · 경락가 표시 · 카드를 누르면 해당
-            품목으로 전환합니다.
-          </p>
+      <article class="card watch-card">
+        <div class="section-head">
+          <div>
+            <h2>취급 품목 시세</h2>
+            <p>경락가 기준 · 카드를 누르면 해당 품목으로 전환합니다.</p>
+          </div>
         </div>
+        <div class="cards price-grid">${priceCards()}</div>
         <button class="text-link" type="button" data-page="market">
           시장 시세 전체 보기 →
         </button>
-      </div>
-      <div class="cards price-grid">${priceCards()}</div>
+      </article>
     </section>
   </div>`;
 }

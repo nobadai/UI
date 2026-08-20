@@ -1,5 +1,5 @@
 /*
- * 농산 캣쳐 공통 스타일 엔트리
+ * 햇들 농산 공통 스타일 엔트리
  * 공통 토큰·레이아웃·컴포넌트는 style.css에서 관리하고,
  * 화면별 보정은 pages/<route>.css에서 관리합니다.
  */
@@ -296,38 +296,6 @@ select {
   font-size: 13px;
   font-weight: 800;
   flex: 0 0 24px;
-}
-.forecast-event-point {
-  cursor: crosshair;
-  outline: none;
-}
-.forecast-point-dot {
-  fill: #fff;
-  stroke: var(--primary);
-  stroke-width: 2;
-  transition:
-    r 0.15s,
-    fill 0.15s;
-}
-.forecast-point-hit {
-  fill: transparent;
-  pointer-events: all;
-}
-.daily-hover-zone .forecast-point-dot {
-  opacity: 0;
-}
-.daily-hover-zone:hover .forecast-point-dot,
-.daily-hover-zone:focus .forecast-point-dot {
-  opacity: 1;
-  r: 4;
-  fill: #fff;
-  stroke: var(--danger);
-}
-.forecast-event-point:not(.daily-hover-zone):hover .forecast-point-dot,
-.forecast-event-point:not(.daily-hover-zone):focus .forecast-point-dot {
-  r: 6;
-  fill: var(--primary-light);
-  stroke: var(--danger);
 }
 
 /* Dense dashboard typography aligned to the reference layout */

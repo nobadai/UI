@@ -55,10 +55,11 @@ function forecastPanel() {
       <span class="forecast-guide-icon">↗</span
       ><span
         ><strong id="forecastHoverLabel"
-          >D+${state.horizon} 예측값을 표시 중입니다.</strong
+          >D+${state.horizon} 시점을 보고 있습니다.</strong
         >
-        모델 예측 지평은 D+1 ~ D+18입니다. 점선 위 지점을 클릭하면 아래 산출
-        근거가 해당 시점 기준으로 갱신됩니다.</span
+        그래프 위를 지나가면 세로 기준선에 소매가 · 중도매가 · 경락가가 같은
+        시점 기준으로 함께 표시됩니다. 오늘 오른쪽 예측 구간(D+1 ~ D+18)을
+        클릭하면 그 시점이 고정되고 아래 산출 근거가 갱신됩니다.</span
       >
     </div>
     <label class="horizon-control">
@@ -90,11 +91,9 @@ function priceTypeToggle() {
         (type) =>
           html`<button
             type="button"
-            class="type-chip type-${type.key} ${state.priceTypes.includes(
-              type.key,
-            )
-              ? "on"
-              : ""}"
+            class="type-chip type-${type.key} ${
+              state.priceTypes.includes(type.key) ? "on" : ""
+            }"
             data-price-type="${type.key}"
             aria-pressed="${state.priceTypes.includes(type.key)}"
           >
@@ -213,9 +212,9 @@ function forecastPage() {
                     </td>
                     <td>
                       <span
-                        class="status-badge status-${row.coverage
-                          ? "success"
-                          : "warning"}"
+                        class="status-badge status-${
+                          row.coverage ? "success" : "warning"
+                        }"
                         >${row.coverage ? "예측 검증" : "시세 모니터링"}</span
                       >
                     </td>

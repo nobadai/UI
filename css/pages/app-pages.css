@@ -3,11 +3,10 @@
  * 화면별 파일은 분리해 유지하면서 최초 로딩 때 한 번에 준비해
  * 라우트 전환 중 스타일이 풀리는 현상을 방지합니다.
  */
-@import url("dashboard.css?v=20260820-1");
-@import url("forecast.css?v=20260820-1");
-@import url("proposal.css?v=20260820-1");
-@import url("finance.css?v=20260820-1");
-@import url("operations.css?v=20260820-1");
-@import url("settings.css?v=20260820-1");
-@import url("external.css?v=20260820-1");
-@import url("errors.css?v=20260820-1");
+@import url("dashboard.css?v=20260820-2");
+@import url("forecast.css?v=20260820-2");
+@import url("proposal.css?v=20260820-2");
+@import url("finance.css?v=20260820-2");
+@import url("operations.css?v=20260820-2");
+@import url("settings.css?v=20260820-2");
+@import url("errors.css?v=20260820-2");
