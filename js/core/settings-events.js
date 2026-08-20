@@ -1,208 +1,103 @@
+// -----------------------------------------------------------------------------
+// 설정 화면 동작 — 회원 생성 / 회원 관리 / 회사 관리 / 이상치 탐지 알림
+// -----------------------------------------------------------------------------
+
+function bindSettingsNavigation() {
+  $("[data-logout]")?.addEventListener("click", () => {
+    location.href = "login.html";
+  });
+  bindSettingsPanel();
+}
+
 function bindSettingsPanel() {
+  bindMemberForms();
+  bindCompanyForm();
+  bindAnomalyForm();
+}
+
+function bindMemberForms() {
+  $("#memberCreateForm")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const scopes = form.getAll("scope");
+    openModal(
+      "계정 생성 확인",
+      html`<p>${escapeHtml(form.get("name"))} 님의 계정을 생성합니다.</p>
+        <div class="modal-detail">
+          이메일 ${escapeHtml(form.get("email"))}<br />담당 파트
+          ${escapeHtml(form.get("team"))}<br />권한
+          ${escapeHtml(form.get("role"))}<br />접근 범위
+          ${scopes.length ? scopes.join(" · ") : "없음"}
+        </div>
+        <p>프로토타입에서는 실제 계정이 만들어지지 않습니다.</p>`,
+    );
+  });
+
+  $$("[data-member]").forEach((button) => {
+    button.onclick = () => {
+      const member = MOCK.members[Number(button.dataset.member)];
+      openModal(
+        `${member.name} 권한 변경`,
+        html`<p>${member.email} · ${member.team}</p>
+          <div class="modal-detail">
+            현재 권한 ${member.role}<br />최상위 관리자만 다른 계정의 권한을
+            바꿀 수 있습니다.
+          </div>`,
+        true,
+      );
+    };
+  });
+}
+
+function bindCompanyForm() {
+  const form = $("#companySettingsForm");
+  if (!form) return;
+
+  form.querySelector('[name="name"]')?.addEventListener("input", (event) => {
+    $("#companyNamePreview").textContent = event.target.value;
+  });
+
+  $("#uploadIntroImage")?.addEventListener("click", () =>
+    toast("외부 페이지 대표 이미지는 실제 제품에서 파일 업로드로 연결됩니다."),
+  );
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = Object.fromEntries(
+      new FormData(event.currentTarget).entries(),
+    );
+    localStorage.setItem("agriSim.company", JSON.stringify(data));
+    toast("회사 정보를 저장했습니다. 외부용 화면에도 함께 반영됩니다.");
+  });
+}
+
+function bindAnomalyForm() {
+  const form = $("#anomalySettingsForm");
+  if (!form) return;
   const emailEnabled = $("#emailEnabled");
   const emailInput = $("#notificationEmail");
-  const notificationPreferences = $("#notificationPreferences");
+  const preferences = $("#notificationPreferences");
+
   emailEnabled?.addEventListener("change", () => {
     emailInput.disabled = !emailEnabled.checked;
-    notificationPreferences.disabled = !emailEnabled.checked;
+    preferences.disabled = !emailEnabled.checked;
   });
 
-  $("#requestProfileEdit")?.addEventListener("click", openProfilePasswordModal);
-  $("#cancelProfileEdit")?.addEventListener("click", () => {
-    state.profileEditing = false;
-    $("#settingsPanel").innerHTML = profilePanel();
-    bindSettingsPanel();
-  });
-
-  $("#profileSettingsForm")?.addEventListener("submit", (event) => {
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const profile = Object.fromEntries(form.entries());
-    localStorage.setItem("costCatcher.profile", JSON.stringify(profile));
-    state.profileEditing = false;
-    $("#settingsPanel").innerHTML = profilePanel();
-    bindSettingsPanel();
-    toast("회원 정보를 저장했습니다.");
-  });
-
-  $("#companySettingsForm")?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const company = {
-      name: form.get("companyName"),
-      businessNumber: form.get("businessNumber"),
-      representative: form.get("representative"),
-      storeType: form.get("storeType"),
-    };
-    const storeIds = form.getAll("store");
-    localStorage.setItem("costCatcher.company", JSON.stringify(company));
-    localStorage.setItem("costCatcher.franchise", JSON.stringify({ storeIds }));
-    toast(`회사 정보와 ${storeIds.length}개 매장을 저장했습니다.`);
-  });
-  $("#addCompanyStore")?.addEventListener("click", openAddStoreModal);
-
-  $("#notificationSettingsForm")?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const frequencies = $$('input[name="frequency"]:checked').map(
-      (input) => input.value,
-    );
-    const alertTypes = $$('input[name="alertType"]:checked').map(
-      (input) => input.value,
-    );
-    if (emailEnabled.checked && !frequencies.length) {
-      toast("일별·주별·월간 중 하나 이상 선택해 주세요.");
+    const rules = $$('input[name="rule"]:checked').map((input) => input.value);
+    if (emailEnabled.checked && !rules.length) {
+      toast("탐지 규칙을 하나 이상 선택해 주세요.");
       return;
     }
     localStorage.setItem(
-      "costCatcher.notifications",
+      "agriSim.anomaly",
       JSON.stringify({
         emailEnabled: emailEnabled.checked,
         email: emailInput.value,
-        frequencies,
-        alertTypes,
+        rules,
       }),
     );
-    toast("알림 설정을 브라우저에 저장했습니다.");
-  });
-
-  const updateStoreSummary = () => {
-    const selected = $$('input[name="store"]:checked').map(
-      (input) => input.value,
-    );
-    if ($("#selectedStoreCount"))
-      $("#selectedStoreCount").textContent = `${selected.length}개`;
-    if ($("#selectedStoreNames"))
-      $("#selectedStoreNames").textContent =
-        selected.join(" · ") || "선택된 매장 없음";
-  };
-  $$('input[name="store"]').forEach((input) =>
-    input.addEventListener("change", updateStoreSummary),
-  );
-  $("#selectAllStores")?.addEventListener("click", () => {
-    $$('input[name="store"]').forEach((input) => (input.checked = true));
-    updateStoreSummary();
-  });
-  $("#franchiseSettingsForm")?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const storeIds = $$('input[name="store"]:checked').map(
-      (input) => input.value,
-    );
-    localStorage.setItem("costCatcher.franchise", JSON.stringify({ storeIds }));
-    toast(`${storeIds.length}개 매장을 분석 범위로 저장했습니다.`);
+    toast(`이상치 탐지 규칙 ${rules.length}개를 저장했습니다.`);
   });
 }
-
-function openProfilePasswordModal() {
-  openModal(
-    "비밀번호 확인",
-    html`<form
-      id="profilePasswordForm"
-      class="modal-form profile-password-form"
-    >
-      <p class="modal-form-intro">
-        개인정보 보호를 위해 현재 비밀번호를 입력해 주세요.
-      </p>
-      <label class="field-label" for="profilePassword">현재 비밀번호</label
-      ><input
-        class="search-input"
-        id="profilePassword"
-        type="password"
-        minlength="8"
-        placeholder="비밀번호 8자 이상"
-        autocomplete="current-password"
-        required
-      /><small class="modal-field-help"
-        >프로토타입에서는 임의의 8자 이상 비밀번호로 확인됩니다.</small
-      >
-      <p
-        class="modal-inline-error"
-        id="profilePasswordError"
-        aria-live="polite"
-      ></p>
-      <div class="modal-actions">
-        <button class="button ghost" type="button" id="cancelProfilePassword">
-          취소</button
-        ><button class="button primary" type="submit">확인 후 수정</button>
-      </div>
-    </form>`,
-  );
-  const input = $("#profilePassword");
-  $("#cancelProfilePassword").onclick = closeModal;
-  $("#profilePasswordForm").onsubmit = (event) => {
-    event.preventDefault();
-    if (input.value.length < 8) {
-      input.classList.add("invalid");
-      $("#profilePasswordError").textContent =
-        "비밀번호를 8자 이상 입력해 주세요.";
-      input.focus();
-      return;
-    }
-    state.profileEditing = true;
-    closeModal();
-    $("#settingsPanel").innerHTML = editableProfilePanel();
-    bindSettingsPanel();
-    toast("본인 확인이 완료되었습니다.");
-  };
-  window.setTimeout(() => input.focus(), 80);
-}
-
-function openAddStoreModal() {
-  openModal(
-    "가맹점 추가",
-    html`<form id="addStoreForm" class="modal-form">
-      <label class="field-label" for="newStoreName">매장명</label>
-      <input
-        class="search-input"
-        id="newStoreName"
-        placeholder="예: 판교점"
-        required
-      />
-      <label class="field-label" for="newStoreRegion">지역</label>
-      <input
-        class="search-input"
-        id="newStoreRegion"
-        placeholder="예: 경기 성남시"
-        required
-      />
-      <label class="field-label" for="newStoreManager">담당자</label>
-      <input
-        class="search-input"
-        id="newStoreManager"
-        placeholder="담당자 이름"
-        required
-      />
-      <div class="modal-actions">
-        <button class="button ghost" type="button" id="cancelAddStore">
-          취소</button
-        ><button class="button primary" type="submit">매장 등록</button>
-      </div>
-    </form>`,
-  );
-
-  $("#cancelAddStore").onclick = closeModal;
-  $("#addStoreForm").onsubmit = (event) => {
-    event.preventDefault();
-    const name = $("#newStoreName").value.trim();
-    const region = $("#newStoreRegion").value.trim();
-    const manager = $("#newStoreManager").value.trim();
-    if (MOCK.stores.some((store) => store.name === name)) {
-      toast("이미 등록된 매장명입니다.");
-      return;
-    }
-    MOCK.stores.push({
-      name,
-      region,
-      manager,
-      items: "0개",
-      risks: "없음",
-      state: "등록 완료",
-    });
-    closeModal();
-    route(state.page, false);
-    toast(`${name}을 가맹점 목록에 등록했습니다.`);
-  };
-}
-
-// -----------------------------------------------------------------------------
-// SVG chart rendering and forecast interactions
-// -----------------------------------------------------------------------------

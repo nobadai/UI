@@ -1,0 +1,208 @@
+/* 금일 도매가 예측(ML) — 가격 유형 토글 · 예측 지평 · 산출 근거 */
+#appMain .forecast-page .chart-card {
+  margin-bottom: 14px;
+}
+#appMain .forecast-page .detail-grid {
+  align-items: start;
+}
+
+.price-type-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 2px;
+}
+.type-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.type-chip i {
+  width: 16px;
+  border-top: 2px solid currentColor;
+  opacity: 0.35;
+}
+.type-chip small {
+  font-weight: 500;
+  font-size: 10.5px;
+  color: #97a29c;
+}
+.type-chip.on {
+  background: #f6faf8;
+  border-color: #c3d8cd;
+  color: var(--text-primary);
+}
+.type-chip.on i {
+  opacity: 1;
+}
+.type-chip.type-retail.on i {
+  border-top-color: var(--blue);
+}
+.type-chip.type-wholesale.on i {
+  border-top-color: var(--primary);
+}
+.type-chip.type-auction.on i {
+  border-top-color: var(--warning);
+}
+
+.forecast-panel {
+  margin-top: 12px;
+  padding-top: 13px;
+  border-top: 1px solid var(--border);
+}
+.forecast-guide {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.forecast-guide strong {
+  color: var(--text-primary);
+}
+.forecast-guide-icon {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 800;
+}
+.horizon-control {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f8faf8;
+}
+.horizon-control > span {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+.horizon-control input[type="range"] {
+  width: 100%;
+  accent-color: var(--primary);
+}
+.horizon-control b {
+  min-width: 46px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--primary);
+  font-weight: 800;
+}
+.forecast-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.forecast-metrics > div {
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: #fff;
+}
+.forecast-metrics span,
+.forecast-metrics small {
+  display: block;
+  color: var(--text-secondary);
+}
+.forecast-metrics strong {
+  display: block;
+  margin: 5px 0 3px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 산출 근거 */
+.evidence-provenance {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: -2px 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.evidence-provenance span,
+.evidence-provenance b {
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: #f4f7f5;
+  color: var(--text-secondary);
+  font-size: 9.5px;
+  font-weight: 600;
+}
+.evidence-provenance b {
+  background: #fff4df;
+  color: #9a6500;
+}
+.evidence-selected-label {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-light);
+  border-radius: 7px;
+  padding: 4px 9px;
+  white-space: nowrap;
+}
+.evidence-signal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 12px;
+}
+.evidence-signal-grid > div {
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f8faf8;
+}
+.evidence-signal-grid span,
+.evidence-signal-grid small {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+.evidence-signal-grid strong {
+  display: block;
+  margin: 4px 0 2px;
+  font-size: 18px;
+}
+.evidence-updated {
+  animation: evidence-flash 0.5s ease;
+}
+@keyframes evidence-flash {
+  from {
+    border-color: var(--primary);
+  }
+  to {
+    border-color: var(--border);
+  }
+}
+
+@media (max-width: 900px) {
+  .forecast-metrics,
+  .evidence-signal-grid {
+    grid-template-columns: 1fr;
+  }
+  #appMain .forecast-page .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

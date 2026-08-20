@@ -1,0 +1,108 @@
+/* 외부용 화면 미리보기 · 시뮬레이션 페르소나 */
+#appMain .external-page .guest-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 20px;
+  align-items: center;
+  padding: 24px;
+  margin-bottom: 16px;
+  background: linear-gradient(105deg, #eff6f2 0%, #ffffff 66%);
+}
+#appMain .external-page .guest-hero h2 {
+  margin: 12px 0 8px;
+}
+#appMain .external-page .guest-hero p {
+  margin: 0 0 14px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.65;
+}
+.external-visual {
+  display: grid;
+  place-items: center;
+}
+.external-visual img {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+}
+
+#appMain .external-page .detail-grid {
+  align-items: start;
+  margin-bottom: 14px;
+}
+
+.chat-board-card {
+  padding: 17px;
+}
+.chat-board {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.chat-board li {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: #f8faf8;
+}
+.chat-board-time {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+.chat-board strong {
+  font-size: 12.5px;
+}
+.chat-board p {
+  margin: 3px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.external-feature-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+.external-feature-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 2px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px;
+}
+.external-feature-list li:last-child {
+  border-bottom: 0;
+}
+.external-feature-list strong {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.external-feature-list span {
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  #appMain .external-page .guest-hero {
+    grid-template-columns: 1fr;
+  }
+  .external-visual {
+    order: -1;
+  }
+  #appMain .external-page .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

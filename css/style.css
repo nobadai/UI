@@ -1490,9 +1490,6 @@ button {
   .store-summary {
     grid-template-columns: 1fr;
   }
-  .price-card:nth-child(n + 3) {
-    display: none;
-  }
   .content {
     padding: 16px 12px;
   }
@@ -1860,4 +1857,204 @@ body.route-loading:before {
   .price-card {
     grid-template-columns: 44px 1fr;
   }
+}
+
+/* -----------------------------------------------------------------------------
+ * v0.5 공통 컴포넌트
+ * 에이전트 파이프라인 화면에서 반복되는 출처 표기, 축 배지, 다중 시계열 색상.
+ * ---------------------------------------------------------------------------*/
+#mainNav {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 2px;
+}
+#mainNav::-webkit-scrollbar {
+  width: 6px;
+}
+#mainNav::-webkit-scrollbar-thumb {
+  background: #dbe4de;
+  border-radius: 3px;
+}
+
+.ref-id {
+  display: inline-block;
+  font-family: "Inter", monospace;
+  font-size: 10px;
+  letter-spacing: -0.01em;
+  color: #5d7a6d;
+  background: #eef4f0;
+  border: 1px solid #dde8e2;
+  border-radius: 5px;
+  padding: 1px 6px;
+}
+
+.axis-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 3px 9px;
+  border: 1px solid transparent;
+}
+.axis-quantity,
+.axis-timing {
+  background: #eef4ff;
+  color: #2f5d9e;
+  border-color: #d8e5f7;
+}
+.axis-price {
+  background: #fff4e6;
+  color: #b7791f;
+  border-color: #f5e2c6;
+}
+.axis-amount {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: #cfe2d8;
+}
+
+.stage-tag {
+  display: inline-block;
+  background: var(--primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  border-radius: 6px;
+  padding: 2px 7px;
+  margin-right: 7px;
+  vertical-align: 2px;
+}
+
+.check-type {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 6px;
+}
+
+.prediction-coverage {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-light);
+  border-radius: 5px;
+  padding: 1px 6px;
+  vertical-align: 2px;
+}
+
+/* 다중 시계열: 소매가 · 중도매가 · 경락가 */
+.series-retail .actual-line,
+.series-retail .forecast-line {
+  stroke: var(--blue);
+}
+.series-retail .chart-point {
+  fill: var(--blue);
+}
+.series-wholesale .actual-line,
+.series-wholesale .forecast-line {
+  stroke: var(--primary);
+}
+.series-wholesale .chart-point {
+  fill: var(--primary);
+}
+.series-auction .actual-line,
+.series-auction .forecast-line {
+  stroke: var(--warning);
+}
+.series-auction .chart-point {
+  fill: var(--warning);
+}
+.actual-line {
+  stroke-width: 2.2;
+}
+.legend i.type-retail {
+  border-top-color: var(--blue);
+}
+.legend i.type-wholesale {
+  border-top-color: var(--primary);
+}
+.legend i.type-auction {
+  border-top-color: var(--warning);
+}
+.axis-label.today-label {
+  font-weight: 800;
+  fill: var(--primary);
+}
+.forecast-point-dot {
+  fill: #fff;
+  stroke: var(--warning);
+  stroke-width: 2;
+  opacity: 0;
+  transition: 0.15s;
+}
+.forecast-event-point:hover .forecast-point-dot,
+.forecast-event-point.active .forecast-point-dot {
+  opacity: 1;
+}
+.forecast-point-hit {
+  cursor: pointer;
+}
+.chart-tooltip b {
+  display: block;
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.chart-tooltip .tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.chart-tooltip .tooltip-row strong {
+  display: inline;
+  font-size: 11px;
+  margin: 0;
+}
+.chart-tooltip .tooltip-row:before {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+.tooltip-row.series-retail {
+  color: var(--blue);
+}
+.tooltip-row.series-wholesale {
+  color: var(--primary);
+}
+.tooltip-row.series-auction {
+  color: #b7791f;
+}
+
+.spark-line {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+.spark-split {
+  stroke: #cbd8d1;
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+.page-intro.actions-only {
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+.page-intro.actions-only > * {
+  margin-left: auto;
+}
+
+.legend span {
+  white-space: nowrap;
 }

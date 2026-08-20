@@ -22,15 +22,16 @@
       kicker: "로그인 필요",
       title: "로그인이 필요한 화면입니다",
       description: "세션이 만료됐거나 아직 로그인하지 않았습니다.",
-      help: "계정으로 다시 로그인하면 이전에 확인하던 원가 분석 화면을 계속 이용할 수 있습니다.",
+      help: "계정으로 다시 로그인하면 이전에 보던 매입 제안 화면을 계속 이용할 수 있습니다.",
       primary: "로그인",
       href: "login.html",
     },
     403: {
       kicker: "접근 권한 없음",
       title: "이 화면을 볼 권한이 없습니다",
-      description: "현재 계정의 역할에는 이 기능에 대한 접근 권한이 없습니다.",
-      help: "조직 관리자에게 사용자 권한을 요청하거나 다른 계정으로 로그인해 주세요.",
+      description:
+        "회원 관리와 회사 관리는 최상위 관리자만 접근할 수 있습니다.",
+      help: "최상위 관리자에게 권한을 요청하거나 다른 계정으로 로그인해 주세요.",
       primary: "이전 화면",
       action: "back",
     },
@@ -38,7 +39,7 @@
       kicker: "페이지를 찾을 수 없음",
       title: "찾으시는 화면이 사라졌어요",
       description: "주소가 변경됐거나 존재하지 않는 페이지입니다.",
-      help: "원가 캣쳐 대시보드에서 식자재 가격과 원가 위험 신호를 다시 확인해 보세요.",
+      help: "대시보드에서 오늘의 상태 스냅샷과 파이프라인 진행 상황을 다시 확인해 보세요.",
       primary: "대시보드로",
       href: "index.html#/dashboard",
     },
@@ -53,8 +54,9 @@
     503: {
       kicker: "서비스 점검 중",
       title: "조금만 기다려 주세요",
-      description: "더 안정적인 원가 분석을 위해 서비스를 점검하고 있습니다.",
-      help: "점검이 끝나면 가격 예측과 브리핑 기능을 정상적으로 이용할 수 있습니다.",
+      description:
+        "더 안정적인 시뮬레이션 운영을 위해 서비스를 점검하고 있습니다.",
+      help: "점검이 끝나면 가격 예측과 매입 제안 기능을 정상적으로 이용할 수 있습니다.",
       primary: "새로고침",
       action: "retry",
     },
@@ -86,11 +88,11 @@
         <div
           class="error-mascot"
           role="img"
-          aria-label="원가 캣쳐 마스코트"
+          aria-label="농산 캣쳐 마스코트"
         ></div>
       </section>
       <section class="error-copy">
-        <span class="error-kicker">COST CATCHER · ${state.kicker}</span>
+        <span class="error-kicker">AGRI CATCHER · ${state.kicker}</span>
         <div class="error-code">${code === "offline" ? "OFFLINE" : code}</div>
         <h1>${state.title}</h1>
         <p>${state.description}</p>

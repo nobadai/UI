@@ -1,0 +1,72 @@
+/* 영업 관리 · 재고/물류 관리 · 거래처 관리 */
+.capacity-card {
+  padding: 17px;
+  margin-bottom: 14px;
+}
+.capacity-track {
+  position: relative;
+  height: 16px;
+  border-radius: 999px;
+  background: #eef2f0;
+  overflow: visible;
+  margin-top: 4px;
+}
+.capacity-track i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), #4fa382);
+}
+.capacity-track b {
+  position: absolute;
+  top: -3px;
+  transform: translateX(-50%);
+  height: 22px;
+  padding-left: 8px;
+  border-left: 2px dashed var(--danger);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--danger);
+  white-space: nowrap;
+}
+.capacity-legend {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.storage-chip {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+.storage-cold {
+  background: #eef4ff;
+  color: #2f5d9e;
+}
+.storage-room {
+  background: #fff4e6;
+  color: #b7791f;
+}
+
+#appMain .delivery-row {
+  cursor: pointer;
+}
+#appMain .delivery-row:hover td {
+  background: #f7faf8;
+}
+
+.receipt-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+  white-space: nowrap;
+}
+.receipt-actions .button {
+  padding: 5px 10px;
+  font-size: 11px;
+}

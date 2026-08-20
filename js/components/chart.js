@@ -1,297 +1,258 @@
-function renderChart(target, id = "cabbage", decorative = false) {
+// -----------------------------------------------------------------------------
+// 가격 시계열 그래프
+// 하나의 화면에서 소매가·중도매가·경락가를 함께 표시합니다 (정의서 §6.1).
+// 숫자는 ML 파이프라인 산출물을 대신하는 Mock이며 LLM이 만들지 않습니다.
+// -----------------------------------------------------------------------------
+
+const CHART_BOX = { W: 780, H: 300, l: 60, r: 20, t: 18, b: 40 };
+const PAST_LABELS = ["7/24", "7/31", "8/7", "8/14", "오늘"];
+
+/** 화면에 표시할 축 눈금 위치와 라벨을 만듭니다. */
+function chartTicks(actualLength, forecastLength) {
+  const offset = actualLength - 1;
+  const ticks = PAST_LABELS.map((label, index) => ({
+    index: Math.round((index * offset) / (PAST_LABELS.length - 1)),
+    label,
+  }));
+  [6, 12, 18].forEach((day) => {
+    if (day < forecastLength)
+      ticks.push({ index: offset + day, label: `D+${day}` });
+  });
+  return ticks;
+}
+
+/**
+ * @param {HTMLElement} target 그래프를 그릴 컨테이너
+ * @param {object} options
+ *  - item: 품목 id
+ *  - types: 표시할 가격유형 key 배열
+ *  - band: 90% 예측 구간을 그릴 가격유형 key (없으면 생략)
+ *  - decorative: true면 상호작용을 붙이지 않습니다
+ */
+function renderPriceChart(target, options = {}) {
   if (!target) return;
-  const data = MOCK.charts[id] || MOCK.charts.cabbage;
-  const actual = data.actual,
-    forecast = data.forecast;
-  const all = [...actual, ...forecast, ...data.low, ...data.high];
-  const min = Math.floor((Math.min(...all) - 150) / 500) * 500,
-    max = Math.ceil((Math.max(...all) + 150) / 500) * 500;
-  const W = 760,
-    H = 290,
-    p = { l: 56, r: 18, t: 18, b: 38 };
-  const count = actual.length + forecast.length - 1;
-  const x = (i) => p.l + (i * (W - p.l - p.r)) / (count - 1),
-    y = (v) => p.t + ((max - v) * (H - p.t - p.b)) / (max - min);
-  const actualPts = actual.map((v, i) => `${x(i)},${y(v)}`).join(" ");
-  const offset = actual.length - 1;
-  const forecastPts = forecast
-    .map((v, i) => `${x(offset + i)},${y(v)}`)
-    .join(" ");
-  const area = [
-    ...data.high.map((v, i) => `${x(offset + i)},${y(v)}`),
-    ...data.low.map(
-      (v, i) =>
-        `${x(offset + data.low.length - 1 - i)},${y(data.low[data.low.length - 1 - i])}`,
-    ),
-  ].join(" ");
+  const itemId = options.item || state.item;
+  const types = (options.types || state.priceTypes).filter(
+    (key) => MOCK.series[itemId] && MOCK.series[itemId][key],
+  );
+  if (!types.length) return;
+  const band =
+    options.band && types.includes(options.band) ? options.band : null;
+  const { W, H, l, r, t, b } = CHART_BOX;
+
+  const sets = types.map((key) => ({
+    key,
+    meta: findPriceType(key),
+    ...MOCK.series[itemId][key],
+  }));
+  const values = sets.flatMap((set) => [
+    ...set.actual,
+    ...set.forecast,
+    ...(band === set.key ? [...set.low, ...set.high] : []),
+  ]);
+  const step = Math.max(
+    100,
+    Math.round((Math.max(...values) - Math.min(...values)) / 500) * 100,
+  );
+  const min = Math.floor((Math.min(...values) - step * 0.4) / step) * step;
+  const max = Math.ceil((Math.max(...values) + step * 0.4) / step) * step;
+
+  const offset = sets[0].actual.length - 1;
+  const count = sets[0].actual.length + sets[0].forecast.length - 1;
+  const x = (i) => l + (i * (W - l - r)) / (count - 1);
+  const y = (v) => t + ((max - v) * (H - t - b)) / (max - min);
+
   const steps = 5;
   let grid = "";
-  for (let i = 0; i < steps; i++) {
-    const v = max - ((max - min) * i) / (steps - 1),
-      yy = y(v);
+  for (let i = 0; i < steps; i += 1) {
+    const value = max - ((max - min) * i) / (steps - 1);
+    const yy = y(value);
     grid += html`<line
         class="grid-line"
-        x1="${p.l}"
-        x2="${W - p.r}"
+        x1="${l}"
+        x2="${W - r}"
         y1="${yy}"
         y2="${yy}"
-      /><text class="axis-label" x="${p.l - 9}" y="${yy + 4}" text-anchor="end"
-        >${Math.round(v).toLocaleString()}</text
+      /><text class="axis-label" x="${l - 9}" y="${yy + 4}" text-anchor="end"
+        >${Math.round(value).toLocaleString()}</text
       >`;
   }
-  const labels = [
-    "4/22",
-    "4/29",
-    "5/6",
-    "5/13",
-    "5/20",
-    "5/27",
-    "6/3",
-    "6/10",
-    "6/17",
-  ];
-  const labelMarkup = labels
-    .map((l, i) => {
-      const xx = p.l + (i * (W - p.l - p.r)) / (labels.length - 1);
-      return html`<text
-        class="axis-label"
-        x="${xx}"
-        y="${H - 11}"
-        text-anchor="middle"
-        >${l}</text
-      >`;
+
+  const bandSet = band ? sets.find((set) => set.key === band) : null;
+  const bandArea = bandSet
+    ? [
+        ...bandSet.high.map((v, i) => `${x(offset + i)},${y(v)}`),
+        ...bandSet.low.map((v, i) => `${x(offset + i)},${y(v)}`).reverse(),
+      ].join(" ")
+    : "";
+
+  const lines = sets
+    .map((set) => {
+      const actualPts = set.actual.map((v, i) => `${x(i)},${y(v)}`).join(" ");
+      const forecastPts = set.forecast
+        .map((v, i) => `${x(offset + i)},${y(v)}`)
+        .join(" ");
+      return html`<g class="series series-${set.key}">
+        <polyline class="actual-line" points="${actualPts}" />
+        <polyline class="forecast-line" points="${forecastPts}" />
+        <circle
+          class="chart-point"
+          cx="${x(offset)}"
+          cy="${y(set.actual.at(-1))}"
+          r="4.5"
+        />
+      </g>`;
     })
     .join("");
+
+  const ticks = chartTicks(sets[0].actual.length, sets[0].forecast.length)
+    .map(
+      (tick) =>
+        html`<text
+          class="axis-label ${tick.label === "오늘" ? "today-label" : ""}"
+          x="${x(tick.index)}"
+          y="${H - 12}"
+          text-anchor="middle"
+          >${tick.label}</text
+        >`,
+    )
+    .join("");
+
+  const hitPoints = sets[0].actual
+    .map(
+      (_, i) =>
+        html`<rect
+          class="hit-point"
+          data-index="${i}"
+          x="${x(i) - 6}"
+          y="${t}"
+          width="12"
+          height="${H - t - b}"
+          fill="transparent"
+        />`,
+    )
+    .join("");
+
+  const forecastPoints = options.decorative
+    ? ""
+    : sets[0].forecast
+        .map((_, i) =>
+          i === 0
+            ? ""
+            : html`<g class="forecast-event-point" data-horizon="${i}">
+                <circle
+                  class="forecast-point-dot"
+                  cx="${x(offset + i)}"
+                  cy="${y(sets[0].forecast[i])}"
+                  r="3"
+                />
+                <rect
+                  class="forecast-point-hit"
+                  x="${x(offset + i) - 6}"
+                  y="${t}"
+                  width="12"
+                  height="${H - t - b}"
+                  fill="transparent"
+                />
+              </g>`,
+        )
+        .join("");
+
   target.innerHTML = html`<svg
       viewBox="0 0 ${W} ${H}"
       role="img"
-      aria-label="${getIngredient(id).name} 실제 및 예측 가격 그래프"
+      aria-label="${findItem(itemId).name} ${sets
+        .map((set) => set.meta.label)
+        .join(" · ")} 실제 및 D+18 예측 가격 그래프"
     >
       ${grid}
-      <polygon class="range-area" points="${area}" />
+      ${bandArea ? `<polygon class="range-area" points="${bandArea}" />` : ""}
       <line
         class="today-line"
         x1="${x(offset)}"
         x2="${x(offset)}"
-        y1="${p.t}"
-        y2="${H - p.b}"
+        y1="${t}"
+        y2="${H - b}"
       />
-      <polyline class="actual-line" points="${actualPts}" />
-      <polyline class="forecast-line" points="${forecastPts}" />
-      <circle
-        class="chart-point"
-        cx="${x(offset)}"
-        cy="${y(actual.at(-1))}"
-        r="5"
-      />
-      ${labelMarkup}
-      <text
-        class="axis-label"
-        x="${x(offset)}"
-        y="${H - 25}"
-        text-anchor="middle"
-        style="font-weight:800;fill:#185c4a"
-      >
-        오늘
-      </text>
-      ${actual
-        .map(
-          (v, i) =>
-            html`<circle
-              class="hit-point"
-              data-value="${v}"
-              cx="${x(i)}"
-              cy="${y(v)}"
-              r="9"
-              fill="transparent"
-            />`,
-        )
-        .join("")}
+      ${lines} ${ticks} ${hitPoints} ${forecastPoints}
     </svg>
     <div class="chart-tooltip"></div>`;
-  if (!decorative) {
-    $$(".hit-point", target).forEach((dot) => {
-      dot.onmouseenter = (e) => {
-        const tt = $(".chart-tooltip", target);
-        tt.style.display = "block";
-        tt.style.left = `${Math.min(e.offsetX + 8, target.clientWidth - 100)}px`;
-        tt.style.top = `${Math.max(e.offsetY - 48, 0)}px`;
-        tt.innerHTML = `실제 도매가<strong>${money(dot.dataset.value)}/kg</strong>`;
-      };
-      dot.onmouseleave = () =>
-        ($(".chart-tooltip", target).style.display = "none");
+
+  if (options.decorative) return;
+  bindChartTooltip(target, sets, offset);
+  bindForecastPoints(target, sets);
+}
+
+function bindChartTooltip(target, sets, offset) {
+  const tooltip = $(".chart-tooltip", target);
+  $$(".hit-point", target).forEach((zone) => {
+    zone.addEventListener("mouseenter", (event) => {
+      const index = Number(zone.dataset.index);
+      tooltip.style.display = "block";
+      tooltip.style.left = `${Math.min(event.offsetX + 10, target.clientWidth - 150)}px`;
+      tooltip.style.top = `${Math.max(event.offsetY - 20, 4)}px`;
+      tooltip.innerHTML = html`<b
+          >${index === offset ? "오늘" : `${offset - index}일 전`} 실측</b
+        >
+        ${sets
+          .map(
+            (set) =>
+              html`<span class="tooltip-row series-${set.key}"
+                >${set.meta.label}<strong
+                  >${won(set.actual[index])}원</strong
+                ></span
+              >`,
+          )
+          .join("")}`;
     });
-  }
+    zone.addEventListener("mouseleave", () => {
+      tooltip.style.display = "none";
+    });
+  });
 }
-const average = (values) =>
-  Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
-function buildChartSeries(source, granularity = "daily") {
-  if (granularity === "weekly") {
-    const actual = [];
-    for (let i = 0; i < source.actual.length; i += 5)
-      actual.push(average(source.actual.slice(i, i + 5)));
-    actual[actual.length - 1] = source.actual.at(-1);
-    const points = [0, 2, 4, 6, 8];
-    return {
-      actual,
-      forecast: points.map((i) => source.forecast[i]),
-      low: points.map((i) => (i === 0 ? source.actual.at(-1) : source.low[i])),
-      high: points.map((i) =>
-        i === 0 ? source.actual.at(-1) : source.high[i],
-      ),
-      labels: [
-        "4월 4주",
-        "5월 1주",
-        "5월 2주",
-        "5월 3주",
-        "오늘",
-        "1주 후",
-        "2주 후",
-        "3주 후",
-        "4주 후",
-      ],
-    };
-  }
-  if (granularity === "monthly") {
-    return {
-      actual: [
-        average(source.actual.slice(0, 12)),
-        average(source.actual.slice(12, 24)),
-        source.actual.at(-1),
-      ],
-      forecast: [source.actual.at(-1), source.forecast.at(-1)],
-      low: [source.actual.at(-1), source.low.at(-1)],
-      high: [source.actual.at(-1), source.high.at(-1)],
-      labels: ["3월", "4월", "5월 현재", "6월 예측"],
-    };
-  }
-  return {
-    actual: [...source.actual],
-    forecast: [...source.forecast],
-    low: [...source.low],
-    high: [...source.high],
-    labels: [
-      "4/22",
-      "4/29",
-      "5/6",
-      "5/13",
-      "5/20",
-      "5/27",
-      "6/3",
-      "6/10",
-      "6/17",
-    ],
-  };
-}
-const renderChartBase = renderChart;
-function attachForecastInteractions(target, series) {
-  const svg = target.querySelector("svg");
-  if (!svg) return;
-  svg.querySelector(".forecast-interactions")?.remove();
-  const W = 760,
-    H = 290,
-    p = { l: 56, r: 18, t: 18, b: 38 },
-    all = [...series.actual, ...series.forecast, ...series.low, ...series.high],
-    min = Math.floor((Math.min(...all) - 150) / 500) * 500,
-    max = Math.ceil((Math.max(...all) + 150) / 500) * 500,
-    count = series.actual.length + series.forecast.length - 1,
-    offset = series.actual.length - 1,
-    x = (i) => p.l + (i * (W - p.l - p.r)) / (count - 1),
-    y = (value) => p.t + ((max - value) * (H - p.t - p.b)) / (max - min),
-    points =
-      state.granularity === "daily"
-        ? series.forecast
-            .slice(1)
-            .map((_, index) => ({ h: index + 1, i: index + 1 }))
-        : state.granularity === "weekly"
-          ? [
-              { h: 1, i: 1 },
-              { h: 2, i: 2 },
-              { h: 3, i: 3 },
-              { h: 4, i: 4 },
-            ]
-          : [{ h: 4, i: 1 }],
-    ns = "http://www.w3.org/2000/svg",
-    group = document.createElementNS(ns, "g");
-  group.setAttribute("class", "forecast-interactions");
-  points.forEach((point) => {
-    const item = document.createElementNS(ns, "g"),
-      cx = x(offset + point.i),
-      cy = y(series.forecast[point.i]);
-    item.setAttribute(
-      "class",
-      `forecast-event-point ${state.granularity === "daily" ? "daily-hover-zone" : ""}`,
-    );
-    item.setAttribute("tabindex", "0");
-    item.setAttribute("role", "button");
-    item.setAttribute(
-      "aria-label",
-      `${horizonLabel(point.h)} 예상 가격 ${money(series.forecast[point.i])}`,
-    );
-    item.innerHTML = html`<circle
-        class="forecast-point-dot"
-        cx="${cx}"
-        cy="${cy}"
-        r="4"
-      /><circle class="forecast-point-hit" cx="${cx}" cy="${cy}" r="15" />`;
-    const preview = () => {
-      state.horizon = point.h;
+
+function bindForecastPoints(target, sets) {
+  $$(".forecast-event-point", target).forEach((point) => {
+    const horizon = Number(point.dataset.horizon);
+    const apply = () => {
+      state.horizon = horizon;
       if ($("#forecastMetrics"))
         $("#forecastMetrics").innerHTML = forecastMetrics();
       const label = $("#forecastHoverLabel");
-      if (label)
-        label.textContent = `${horizonLabel(point.h)} 예측값을 표시 중입니다.`;
-      updateForecastSelection();
-    };
-    const commit = () => {
-      preview();
-      state.evidenceHorizon = point.h;
-      state.evidenceGranularity = state.granularity;
-      updateEvidencePanel();
-    };
-    item.addEventListener("mouseenter", preview);
-    item.addEventListener("focus", preview);
-    item.addEventListener("click", commit);
-    group.append(item);
-  });
-  svg.append(group);
-}
-renderChart = function (target, id = "cabbage", decorative = false) {
-  if (!target) return;
-  const source = MOCK.charts[id] || MOCK.charts.cabbage,
-    series = buildChartSeries(source, state.granularity),
-    previous = MOCK.charts[id];
-  MOCK.charts[id] = series;
-  renderChartBase(target, id, decorative);
-  MOCK.charts[id] = previous;
-  const labels = [...target.querySelectorAll("svg text.axis-label")].filter(
-    (el) => el.getAttribute("y") === "279",
-  );
-  labels.forEach((el, index) => {
-    if (index < series.labels.length) {
-      el.textContent = series.labels[index];
-      el.setAttribute(
-        "x",
-        String(
-          56 +
-            (index * (760 - 56 - 18)) / Math.max(1, series.labels.length - 1),
-        ),
+      if (label) label.textContent = `D+${horizon} 예측값을 표시 중입니다.`;
+      $$(".forecast-event-point", target).forEach((item) =>
+        item.classList.toggle("active", item === point),
       );
-      el.style.display = "";
-    } else el.style.display = "none";
+      if ($("#horizonSlider")) $("#horizonSlider").value = String(horizon);
+    };
+    point.addEventListener("mouseenter", apply);
+    point.addEventListener("click", () => {
+      apply();
+      if ($("#evidencePanel")) updateEvidencePanel();
+    });
+    if (horizon === state.horizon) point.classList.add("active");
   });
-  const svg = target.querySelector("svg");
-  if (svg)
-    svg.setAttribute(
-      "aria-label",
-      `${getIngredient(id).name} ${state.granularity === "daily" ? "일별" : state.granularity === "weekly" ? "주별" : "월별"} 실제 및 예측 가격 그래프`,
-    );
-  if (!decorative) attachForecastInteractions(target, series);
-};
-function getIngredient(id = state.ingredient) {
-  return MOCK.ingredients.find((i) => i.id === id) || MOCK.ingredients[0];
 }
 
-// -----------------------------------------------------------------------------
-// Chatbot and shared feedback UI
-// -----------------------------------------------------------------------------
+/** 대시보드·시장 시세 화면의 소형 스파크라인. */
+function renderSparkline(target, itemId, typeKey = "auction") {
+  if (!target) return;
+  const source = MOCK.series[itemId][typeKey];
+  const points = [...source.actual.slice(-10), ...source.forecast.slice(1)];
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const W = 120;
+  const H = 34;
+  const path = points
+    .map(
+      (value, index) =>
+        `${(index * W) / (points.length - 1)},${H - ((value - min) / (max - min || 1)) * (H - 4) - 2}`,
+    )
+    .join(" ");
+  const splitX =
+    ((source.actual.slice(-10).length - 1) * W) / (points.length - 1);
+  target.innerHTML = html`<svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+    <polyline class="spark-line" points="${path}" />
+    <line class="spark-split" x1="${splitX}" x2="${splitX}" y1="0" y2="${H}" />
+  </svg>`;
+}

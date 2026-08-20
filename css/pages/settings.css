@@ -389,3 +389,40 @@
     flex: 1;
   }
 }
+
+/* v0.5 설정 화면 추가 요소 */
+.settings-menu .menu-flag {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: var(--warning-bg);
+  color: #b7791f;
+  font-size: 9.5px;
+  font-weight: 700;
+}
+.settings-menu button.active .menu-flag {
+  background: rgba(255, 255, 255, 0.24);
+  color: #fff;
+}
+.editable-form-grid .form-wide {
+  grid-column: 1 / -1;
+}
+.editable-form-grid textarea.search-input {
+  min-height: 78px;
+  padding: 11px 13px;
+  line-height: 1.6;
+  resize: vertical;
+}
+.franchise-summary .status-badge {
+  margin-left: auto;
+}
+.intro-image-slot {
+  display: grid;
+  place-items: center;
+  min-height: 128px;
+  border: 1px dashed #c9d6ce;
+  border-radius: 12px;
+  background: #f8faf8;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
